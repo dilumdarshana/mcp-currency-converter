@@ -1,0 +1,30 @@
+{
+  "name": "@alcorme/mcp-server-boilerplate-ts",
+  "version": "1.0.0",
+  "author": "Dilum Darshana <dilum.dar@gmail.com>",
+  "description": "Boilerplate for Model Context Protocol server",
+  "keywords": [
+    "mcp",
+    "mcp xxx"
+  ],
+  "license": "ISC",
+  "main": "dist/index.js",
+  "bin": {
+    "alcorme-mcp-server": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('dist/index.js', '755')\"",
+    "build:watch": "tsc --watch",
+    "build:dev": "tsx --watch src/index.ts",
+    "inspector": "DANGEROUSLY_OMIT_AUTH=true pnpx @modelcontextprotocol/inspector pnpm build:dev"
+  },
+  "packageManager": "pnpm@10.7.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.1",
+    "zod": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.8",
+    "tsx": "^4.20.3"
+  }
+}
