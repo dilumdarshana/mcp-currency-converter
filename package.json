@@ -16,12 +16,13 @@
     "build": "tsc && node -e \"require('fs').chmodSync('dist/index.js', '755')\"",
     "build:watch": "tsc --watch",
     "build:dev": "tsx --watch src/index.ts",
-    "inspector": "DANGEROUSLY_OMIT_AUTH=true pnpx @modelcontextprotocol/inspector pnpm build:dev"
+    "inspector": "pnpm build && DANGEROUSLY_OMIT_AUTH=true pnpx @modelcontextprotocol/inspector pnpm build:dev"
   },
   "packageManager": "pnpm@10.7.0",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.1",
-    "zod": "^4.0.5"
+    "dotenv": "^16.5.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@types/node": "^20.19.8",
