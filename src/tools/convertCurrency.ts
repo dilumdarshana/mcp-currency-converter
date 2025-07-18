@@ -2,10 +2,9 @@
  * Convert given amount from one currency to another using the Free Currency API.
  */
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-
 import { z } from 'zod';
-import { MCPTool } from '../types';
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import { Logger } from '../utils/logger.js';
 
 type CurrencyApiResponse = {
   data: Record<string, number>;
@@ -42,11 +41,14 @@ async function convertCurrency (
   const currencyFinderKey = process.env.FREE_CURRENCY_API_KEY;
   if (!currencyFinderKey) throw new Error('Missing FREE_CURRENCY_KEY');
 
+  // Initialise logger
+  const logger = Logger.log();
+
   try {
     const response = await fetch(
       `https://api.freecurrencyapi.com/v1/latest?apikey=${currencyFinderKey}&base_currency=${fromCurrency}&currencies=${toCurrency}`
     );
-
+    logger.info(`Converting ${amount} ${fromCurrency} to ${toCurrency}`);
     const data = (await response.json()) as CurrencyApiResponse;
     const exchangeRate = data.data?.[toCurrency];
 
@@ -59,11 +61,13 @@ async function convertCurrency (
         {
           type: 'text',
           text: `Converted ${amount} ${fromCurrency} to ${toCurrency}: ${convertedAmount} ${toCurrency}`,
-          _meta: {},
         },
       ],
     };
   } catch (error) {
+    logger.error(`Error converting currency: ${error}`);
+
+    // Return a structured error response
     return {
       content: [
         {
@@ -76,5 +80,3 @@ async function convertCurrency (
     };
   }
 }
-
-
