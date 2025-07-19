@@ -19,7 +19,7 @@ const schema = z.object({
 
 type ConvertCurrencyInput = z.infer<typeof schema>;
 
-export function registerTools(server: McpServer) {
+export function registerTools(server: McpServer, logger: Logger) {
   server.tool(
     'convert-currency', 
     'Converts an amount from one currency to another',
@@ -31,24 +31,22 @@ export function registerTools(server: McpServer) {
       idempotentHint: false,
       openWorldHint: true,
     },
-    convertCurrency,
+    (input) => convertCurrency(input, logger),
   );
 };
 
 async function convertCurrency (
-  { fromCurrency, toCurrency, amount }: ConvertCurrencyInput
+  { fromCurrency, toCurrency, amount }: ConvertCurrencyInput,
+  logger: Logger,
 ): Promise<CallToolResult> {
   const currencyFinderKey = process.env.FREE_CURRENCY_API_KEY;
   if (!currencyFinderKey) throw new Error('Missing FREE_CURRENCY_KEY');
-
-  // Initialise logger
-  const logger = Logger.log();
 
   try {
     const response = await fetch(
       `https://api.freecurrencyapi.com/v1/latest?apikey=${currencyFinderKey}&base_currency=${fromCurrency}&currencies=${toCurrency}`
     );
-    logger.info(`Converting ${amount} ${fromCurrency} to ${toCurrency}`);
+    logger.info(`Converting ${amount} ${fromCurrency} to ${toCurrency}...`);
     const data = (await response.json()) as CurrencyApiResponse;
     const exchangeRate = data.data?.[toCurrency];
 

@@ -4,6 +4,14 @@ import { PACKAGE_NAME, VERSION } from './utils/constants.js';
 import { createHttpTransport } from './transport/httpTransport.js';
 import { createStdioTransport } from './transport/stdioTransport.js';
 import { registerTools } from './tools/convertCurrency.js';
+import { Logger } from './utils/logger.js';
+
+
+import express from 'express';
+import cors from 'cors';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { randomUUID } from 'crypto';
+import type { Request, Response } from 'express';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -13,6 +21,10 @@ dotenv.config();
  * @returns Initialized MCP server
  */
 export function createMcpServer() {
+  // Initialize logger
+  const logger = Logger.log();
+
+  // Create the MCP server instance
   const server = new McpServer({
     name: PACKAGE_NAME,
     version: VERSION,
@@ -23,16 +35,39 @@ export function createMcpServer() {
     },
   });
 
-  const transport = process.env.TRANSPORT === 'http'
-    ? createHttpTransport()
-    : createStdioTransport();
-
   // Register tools and resources
-  registerTools(server);
+  registerTools(server, logger);
 
-  server.connect(transport);
+  if (process.env.TRANSPORT === 'http') {
+    const transport = createHttpTransport(server, logger);
+  } else {
+    const transport = createStdioTransport();
+    server.connect(transport);
+  }
 
-  // console.log(`[MCP SERVER] Started using ${process.env.TRANSPORT?.toUpperCase()} transport`);
+  // const app = express();
+  // // app.use(cors());
+  // app.use(express.json());
 
-  return server;
+  // // Connect the server to the transport
+  // app.all('/mcp', async (req: Request, res: Response) => {
+  //   const transport = new StreamableHTTPServerTransport({
+  //     sessionIdGenerator: () => randomUUID(),
+  //   });
+  //   server.connect(transport);
+
+  //   await transport.handleRequest(req, res, req.body);
+  // });
+
+  // app.get('/', (_req: Request, res: Response) => {
+  //   res.send('MCP HTTP Transport is running');
+  // });
+
+  // app.listen(3000, () => {
+  //   // console.log('MCP Server is running at http://localhost:3000/mcp');
+  // });
+
+  // logger.info(`[MCP SERVER] Started using ${process.env.TRANSPORT?.toUpperCase()} transport`);
+
+  // return server;
 }

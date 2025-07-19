@@ -1,13 +1,26 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
-import { randomUUID } from 'crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
+import { randomUUID } from 'node:crypto';
 
+/**
+ * Format a timestamp for logging
+ * @returns Formatted timestamp 2025-07-18_06-45-12
+ */
+function getTimestamp(): string {
+  return new Date().toISOString()
+    .replace(/T/, '_')
+    .replace(/:/g, '-')
+    .replace(/\..+/, '');
+}
+
+/**
+ * Logger class for writing logs to files
+ */
 class Logger {
   private logFilePath: string;
   private errorFilePath: string;
   private sessionId: string;
-  // private stream: fs.WriteStream;
   private logStream: fs.WriteStream;
   private errorStream: fs.WriteStream;
 
@@ -19,18 +32,15 @@ class Logger {
 
     fs.mkdirSync(mcpLogDir, { recursive: true });
 
-    const baseFileName = this.sessionId;
+    const timestamp = getTimestamp(); 
+    const baseFileName = `${timestamp}.${this.sessionId}`;
 
-    // const logFileName = `${this.sessionId}.log`;
     this.logFilePath = path.join(mcpLogDir, `${baseFileName}.log`);
     this.errorFilePath = path.join(mcpLogDir, `${baseFileName}.error.log`);
-
-    // this.logFilePath = path.join(mcpLogDir, logFileName);
 
     this.logStream = fs.createWriteStream(this.logFilePath, { flags: 'a' });
     this.errorStream = fs.createWriteStream(this.errorFilePath, { flags: 'a' });
 
-    // this.stream = fs.createWriteStream(this.logFilePath, { flags: 'a' });
     this.info('Logger initialized');
   }
 
@@ -52,9 +62,6 @@ class Logger {
       if (isError) {
         this.errorStream.write(logMessage);
       }
-
-      // Also append to the log file
-			// fs.appendFileSync(this.logFilePath, `${logMessage}\n`, 'utf8');
 		} catch (err) {
 			// If we can't write to the log file, log the error to console
 			console.error(`Failed to write to log file: ${err}`);
@@ -87,4 +94,5 @@ class Logger {
   }
 }
 
+// Export the Logger class
 export { Logger };
