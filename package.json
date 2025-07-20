@@ -17,7 +17,7 @@
     "build:watch": "tsc --watch",
     "build:dev": "tsx --watch src/index.ts",
     "mcp:stdio": "pnpm build && TRANSPORT=stdio node dist/index.js",
-		"mcp:http": "pnpm build && TRANSPORT=http node dist/index.js",
+    "mcp:http": "pnpm build && TRANSPORT=http node dist/index.js",
     "inspector": "pnpm build && DANGEROUSLY_OMIT_AUTH=true pnpx @modelcontextprotocol/inspector"
   },
   "packageManager": "pnpm@10.7.0",
@@ -33,6 +33,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^20.19.8",
-    "tsx": "^4.20.3"
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
   }
 }
