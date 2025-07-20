@@ -1,4 +1,4 @@
-# Typescript based MCP Server Boilerplate
+# Typescript based MCP Currency Converter
 
 A comprehensive TypeScript boilerplate for creating Model Context Protocol (MCP) servers using the official `@modelcontextprotocol/sdk`.
 

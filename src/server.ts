@@ -5,13 +5,7 @@ import { createHttpTransport } from './transport/httpTransport.js';
 import { createStdioTransport } from './transport/stdioTransport.js';
 import { registerTools } from './tools/convertCurrency.js';
 import { Logger } from './utils/logger.js';
-
-
-import express from 'express';
-import cors from 'cors';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { randomUUID } from 'crypto';
-import type { Request, Response } from 'express';
+import { registerResources } from './resources/listCurrencies.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -37,6 +31,8 @@ export function createMcpServer() {
 
   // Register tools and resources
   registerTools(server, logger);
+
+  registerResources(server, logger);
 
   if (process.env.TRANSPORT === 'http') {
     const transport = createHttpTransport(server, logger);
