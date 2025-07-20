@@ -6,6 +6,7 @@ import { createStdioTransport } from './transport/stdioTransport.js';
 import { registerTools } from './tools/convertCurrency.js';
 import { Logger } from './utils/logger.js';
 import { registerResources } from './resources/listCurrencies.js';
+import { createSseTransport } from './transport/sseTransport.js';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -35,35 +36,14 @@ export function createMcpServer() {
   registerResources(server, logger);
 
   if (process.env.TRANSPORT === 'http') {
-    const transport = createHttpTransport(server, logger);
-  } else {
+    createHttpTransport(server, logger);
+  } else if (process.env.TRANSPORT === 'stdio') {
     const transport = createStdioTransport();
     server.connect(transport);
+  } else if (process.env.TRANSPORT === 'sse') {
+    createSseTransport(server, logger);
+  } else {
+    logger.error('Invalid transport specified. Please set TRANSPORT to http | stdio | sse');
+    process.exit(1);
   }
-
-  // const app = express();
-  // // app.use(cors());
-  // app.use(express.json());
-
-  // // Connect the server to the transport
-  // app.all('/mcp', async (req: Request, res: Response) => {
-  //   const transport = new StreamableHTTPServerTransport({
-  //     sessionIdGenerator: () => randomUUID(),
-  //   });
-  //   server.connect(transport);
-
-  //   await transport.handleRequest(req, res, req.body);
-  // });
-
-  // app.get('/', (_req: Request, res: Response) => {
-  //   res.send('MCP HTTP Transport is running');
-  // });
-
-  // app.listen(3000, () => {
-  //   // console.log('MCP Server is running at http://localhost:3000/mcp');
-  // });
-
-  // logger.info(`[MCP SERVER] Started using ${process.env.TRANSPORT?.toUpperCase()} transport`);
-
-  // return server;
 }
