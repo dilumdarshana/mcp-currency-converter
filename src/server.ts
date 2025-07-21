@@ -5,7 +5,7 @@ import { createHttpTransport } from './transport/httpTransport.js';
 import { createStdioTransport } from './transport/stdioTransport.js';
 import { Logger } from './utils/logger.js';
 import { createSseTransport } from './transport/sseTransport.js';
-import { registerResources, registerTools } from './utils/registrations.js';
+import { registerPrompts, registerResources, registerTools } from './utils/registrations.js';
 
 // Load environment variables from .env file to configure the application
 dotenv.config();
@@ -34,6 +34,7 @@ export function createMcpServer() {
   // Register tools and resources to the server
   registerTools(server, logger); // Add tools for server functionality
   registerResources(server, logger); // Add resources for server functionality
+  registerPrompts(server, logger); // Add prompts for server functionality
 
   // Configure the transport layer based on the TRANSPORT environment variable
   if (process.env.TRANSPORT === 'http') {
