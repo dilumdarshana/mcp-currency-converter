@@ -6,3 +6,7 @@ export interface MCPTool<TInput extends z.ZodTypeAny = any> {
   schema: TInput;
   handler: (input: z.infer<TInput>) => Promise<any>;
 };
+
+export interface CurrencyApiResponse {
+  data: Record<string, number>;
+};

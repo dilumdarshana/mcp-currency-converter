@@ -1,16 +1,17 @@
 # Typescript based MCP Currency Converter
 
-A comprehensive TypeScript boilerplate for creating Model Context Protocol (MCP) servers using the official `@modelcontextprotocol/sdk`.
+A currency converter created with Model Context Protocol (MCP) servers using the `@modelcontextprotocol/sdk`.
+This server exposes currency conversion as an MCP tool and resource, allowing LLMs or clients to convert between currencies or list supported currencies via MCP.
 
 ## Features
 
-- 🚀 **Ready-to-use**: Complete boilerplate with example implementations
-- 🎯 **Type-safe**: Full TypeScript support with strict typing
-- 🏗️ **Extensible**: Clean architecture with abstract base class
-- 📦 **Modern tooling**: ESLint, TypeScript, and development scripts
-- 🔧 **All MCP features**: Tools, Resources, and Prompts support
-- 🛡️ **Error handling**: Comprehensive error handling and validation
-- 📝 **Well-documented**: Clear examples and inline documentation
+- MCP-compliant server using @modelcontextprotocol/sdk
+- Support all transporters. Stdio, http and SSE
+- Currency conversion with real-time exchange rates or mock data
+- List supported currencies via resources/list or resources/read
+- Supports HTTP transport (POST endpoints and SSE if needed)
+- Built with TypeScript for type safety
+- Uses pnpm for package management
 
 ## Quick Start
 

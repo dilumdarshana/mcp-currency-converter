@@ -1,11 +1,12 @@
 {
-  "name": "@alcorme/mcp-server-boilerplate-ts",
+  "name": "@alcorme/mcp-currency-converter",
   "version": "1.0.0",
   "author": "Dilum Darshana <dilum.dar@gmail.com>",
-  "description": "Boilerplate for Model Context Protocol server",
+  "description": "A Model Context Protocol (MCP) server for currency conversion, providing tools and resources for seamless integration.",
   "keywords": [
     "mcp",
-    "mcp xxx"
+    "currency-conversion",
+    "model-context-protocol"
   ],
   "license": "ISC",
   "main": "dist/index.js",
