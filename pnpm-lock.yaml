@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  global: link:../../../../../Users/dilum/Library/pnpm/global/5/node_modules/global
+
 importers:
 
   .:
@@ -20,6 +23,9 @@ importers:
       express:
         specifier: ^5.1.0
         version: 5.1.0
+      global:
+        specifier: link:../../../../../Users/dilum/Library/pnpm/global/5/node_modules/global
+        version: link:../../../../../Users/dilum/Library/pnpm/global/5/node_modules/global
       zod:
         specifier: ^3.25.67
         version: 3.25.67

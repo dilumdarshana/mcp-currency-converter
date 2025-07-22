@@ -11,12 +11,16 @@
   "license": "ISC",
   "main": "dist/index.js",
   "bin": {
-    "alcorme-mcp-server": "./dist/index.js"
+    "alcorme-mcp-currency-converter": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc && node -e \"require('fs').chmodSync('dist/index.js', '755')\"",
     "build:watch": "tsc --watch",
     "build:dev": "tsx --watch src/index.ts",
+    "build:chmod": "chmod +x dist/index.js",
     "mcp:stdio": "pnpm build && TRANSPORT=stdio node dist/index.js",
     "mcp:http": "pnpm build && TRANSPORT=http node dist/index.js",
     "inspector": "pnpm build && DANGEROUSLY_OMIT_AUTH=true pnpx @modelcontextprotocol/inspector"
@@ -36,5 +40,10 @@
     "@types/node": "^20.19.8",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "global": "link:../../../../../Users/dilum/Library/pnpm/global/5/node_modules/global"
+    }
   }
 }
