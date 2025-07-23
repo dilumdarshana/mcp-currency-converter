@@ -1,3 +1,11 @@
+## [1.0.2](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.0.1...v1.0.2) (2025-07-23)
+
+
+### Bug Fixes
+
+* Adding unit tests ([048e0e8](https://github.com/dilumdarshana/mcp-currency-converter/commit/048e0e85a49915481ccb46d3baaab58b1a7229d6))
+* Adding unit tests ([1dc8cdf](https://github.com/dilumdarshana/mcp-currency-converter/commit/1dc8cdfadc373dd5e3a33cb14a48fd974929dd57))
+
 ## [1.0.2-next.1](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.0.1...v1.0.2-next.1) (2025-07-23)
 
 
