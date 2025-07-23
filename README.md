@@ -1,231 +1,102 @@
-# Typescript based MCP Currency Converter
+# TypeScript-based MCP Currency Converter
 
-A currency converter created with Model Context Protocol (MCP) servers using the `@modelcontextprotocol/sdk`.
-This server exposes currency conversion as an MCP tool and resource, allowing LLMs or clients to convert between currencies or list supported currencies via MCP.
+A currency converter created with Model Context Protocol (MCP) servers using the `@modelcontextprotocol/sdk`. This server exposes currency conversion as an MCP tool and resource, allowing LLMs or clients to convert between currencies or list supported currencies via MCP.
+
+```bash
+npm install @alcorme/mcp-currency-converter
+```
 
 ## Features
 
-- MCP-compliant server using @modelcontextprotocol/sdk
-- Support all transporters. Stdio, http and SSE
-- Currency conversion with real-time exchange rates or mock data
-- List supported currencies via resources/list or resources/read
-- Supports HTTP transport (POST endpoints and SSE if needed)
-- Built with TypeScript for type safety
-- Uses pnpm for package management
+- **MCP-compliant server** using `@modelcontextprotocol/sdk`
+- **Transport Support**: Stdio, HTTP, and SSE
+- **Currency Conversion**: Real-time exchange rates or mock data
+- **Resource Management**: List supported currencies via resources
+- **Prompt Capability**: Interactive prompts for dynamic input
+- **Type Safety**: Built with TypeScript
+- **Package Management**: Uses `pnpm` for efficient dependency management
+- **Authentication for http transport**: TBD
 
-## Quick Start
+---
 
-### 1. Installation
+## Prerequisites
+- Node.js (tested on v22.11.0)
+- API key from https://freecurrencyapi.com
+- pnpm
+
+## Development
 
 ```bash
-npm install
+# Clone repository
+$ git clone git@github.com:dilumdarshana/mcp-currency-converter.git
+
+# Set prefered Node.js version
+$ nvm use
+
+# Create .env file from .env_example with correct values
+
+# Install dependecies
+$ pnpm install
+
+# Watch changes
+$ pnpm build:dev
+
+# Build
+$ pnpm build
+
+# Testing with Inspector
+$ pnpm inspector
 ```
 
-### 2. Development
-
-```bash
-# Run in development mode with hot reload
-npm run dev
-
-# Build for production
-npm run build
-
-# Run built server
-npm start
-```
-
-### 3. Testing with Claude Desktop
+## Integrate with Claude Desktop
 
 Add to your Claude Desktop configuration:
+
+Using clone the git repository to the local and need build,
 
 ```json
 {
   "mcpServers": {
-    "my-mcp-server": {
-      "command": "node",
-      "args": ["path/to/your/project/dist/server.js"]
-    }
-  }
-}
-```
-
-## Architecture
-
-### Base Class: `BaseMcpServer`
-
-The `BaseMcpServer` abstract class provides:
-
-- **Handler setup**: Automatic MCP protocol handler registration
-- **Error handling**: Consistent error handling across all operations
-- **Utilities**: Helper methods for content creation and validation
-- **Logging**: Structured logging to stderr
-
-### Implementation: `ExampleMcpServer`
-
-The example server demonstrates:
-
-- **Tools**: `echo` and `add` tools with input validation
-- **Resources**: File and data resources with different content types
-- **Prompts**: Template-based prompt generation with arguments
-
-## Creating Your Own Server
-
-### 1. Extend the Base Class
-
-```typescript
-import { BaseMcpServer } from './server.js';
-
-export class MyMcpServer extends BaseMcpServer {
-  constructor() {
-    super({
-      name: 'my-custom-server',
-      version: '1.0.0',
-      description: 'My custom MCP server',
-    });
-  }
-
-  // Implement abstract methods...
-}
-```
-
-### 2. Implement Required Methods
-
-```typescript
-protected async getTools(): Promise<Tool[]> {
-  return [
-    {
-      name: 'my-tool',
-      description: 'Description of my tool',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          param: { type: 'string', description: 'Parameter description' }
-        },
-        required: ['param']
+    "currency-converter": {
+      "command": "/Users/xxxx/.nvm/versions/node/v22.11.0/bin/node",
+      "args": ["/private/var/www/github/mcp-currency-converter/dist/index.js"],
+      "env": {
+        "TRANSPORT": "stdio",
+        "PORT": "3000",
+        "FREE_CURRENCY_API_KEY": "xxxxx"
       }
     }
-  ];
-}
-
-protected async executeTool(name: string, args: Record<string, any>): Promise<any> {
-  switch (name) {
-    case 'my-tool':
-      this.validateArgs(args, ['param']);
-      return `Processed: ${args.param}`;
-    default:
-      throw new Error(`Unknown tool: ${name}`);
   }
 }
-```
 
-## Available Scripts
-
-- `npm run build` - Build the TypeScript code
-- `npm run dev` - Run in development mode with tsx
-- `npm run start` - Run the built server
-- `npm run watch` - Watch for changes and rebuild
-- `npm run lint` - Run ESLint
-- `npm run lint:fix` - Fix ESLint issues
-- `npm run clean` - Clean build directory
-
-## Directory Structure
-
-```
-src/
-├── server.ts          # Main server implementation
-├── types/             # Custom type definitions
-├── utils/             # Utility functions
-└── handlers/          # Custom handlers (optional)
-
-dist/                  # Built JavaScript files
-```
-
-## Configuration
-
-### Server Configuration
-
-```typescript
-interface ServerConfig {
-  name: string;          // Server name
-  version: string;       // Server version
-  description?: string;  // Server description
-  author?: string;       // Author name
-  license?: string;      // License type
-}
-```
-
-### Environment Variables
-
-You can use environment variables for configuration:
-
-```typescript
-const config: ServerConfig = {
-  name: process.env.SERVER_NAME || 'my-mcp-server',
-  version: process.env.SERVER_VERSION || '1.0.0',
-  description: process.env.SERVER_DESCRIPTION || 'My MCP server',
-};
-```
-
-## Error Handling
-
-The boilerplate includes comprehensive error handling:
-
-```typescript
-// Tool execution errors are caught and returned as error responses
-protected async executeTool(name: string, args: Record<string, any>): Promise<any> {
-  try {
-    // Your tool logic here
-    return result;
-  } catch (error) {
-    // Error will be automatically wrapped and returned to client
-    throw new Error(`Tool execution failed: ${error.message}`);
+# Using npm module,
+{
+  "mcpServers": {
+    "currency-converter": {
+      "command": "pnpx",
+      "args": ["alcorme-mcp-server"],
+      "env": {
+        "TRANSPORT": "stdio",
+        "PORT": "3000",
+        "FREE_CURRENCY_API_KEY": "xxxxx"
+      }
+    }
   }
 }
+
+# Using http transport. (This is still testing on Claude)
+# TBD
 ```
 
-## Logging
+## Integrate with VS Code Github Copilot
 
-Use the built-in logging method:
-
-```typescript
-this.log('Server started', 'info');
-this.log('Warning message', 'warn');
-this.log('Error occurred', 'error');
-```
-
-## Validation
-
-Use the validation helper:
-
-```typescript
-// Validate required arguments
-this.validateArgs(args, ['required_param1', 'required_param2']);
-```
-
-## Content Creation Helpers
-
-```typescript
-// Create text content
-const textContent = this.createTextContent('Hello, world!');
-
-// Create image content
-const imageContent = this.createImageContent(base64Data, 'image/png');
-
-// Create embedded resource
-const resource = this.createEmbeddedResource('data', { key: 'value' });
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
+## Integrate with Typescript MCP Client
 
 ## License
 
-MIT License - see LICENSE file for details.
+MIT License
+
+---
 
 ## Resources
 

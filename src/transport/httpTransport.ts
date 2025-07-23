@@ -27,7 +27,7 @@ export function createHttpTransport(server: McpServer, logger: Logger) {
     logger.info('Calling MCP all endpoint');
     const sessionId = req.headers['mcp-session-id'] as string | undefined;
     let transport: StreamableHTTPServerTransport;
-    
+
     if (sessionId && transports.has(sessionId)) {
       // Reuse existing transport
       transport = transports.get(sessionId)!;
@@ -69,33 +69,33 @@ export function createHttpTransport(server: McpServer, logger: Logger) {
 
   app.get('/mcp', async (req: Request, res: Response) => {
     const sessionId = req.headers['mcp-session-id'] as string | undefined;
-  
+
     if (!sessionId || !transports.has(sessionId)) {
       res.status(400).send('Invalid or missing session ID');
       return;
     }
-  
+
     const transport = transports.get(sessionId)!;
-  
+
     await transport.handleRequest(req, res);
   });
 
   app.delete('/mcp', async (req: Request, res: Response) => {
     const sessionId = req.headers['mcp-session-id'] as string | undefined;
-  
+
     if (!sessionId || !transports.has(sessionId)) {
       res.status(400).send('Invalid or missing session ID');
       return;
     }
-  
+
     const transport = transports.get(sessionId)!;
-  
+
     await transport.handleRequest(req, res);
   });
 
   // Start the server
   const port = process.env.PORT || 3000;
-  app.listen(3000, () => {
+  app.listen(port, () => {
     logger.info(`MCP HTTP server listening on port ${port}`);
   });
 

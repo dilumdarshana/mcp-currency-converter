@@ -39,7 +39,7 @@ export function createSseTransport(server: McpServer, logger: Logger) {
 
   // Start the server
   const port = process.env.PORT || 3000;
-  app.listen(3000, () => {
+  app.listen(port, () => {
     logger.info(`MCP HTTP server listening on port ${port}`);
   });
 

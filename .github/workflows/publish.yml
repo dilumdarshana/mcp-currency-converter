@@ -1,0 +1,54 @@
+# Workflow name
+name: Publish to npm with Semantic Release
+
+# Trigger the workflow on pushes to the specified branches
+on:
+  push:
+    branches:
+      - master # Main branch for stable releases
+      - next   # Branch for pre-releases
+
+jobs:
+  release:
+    # Job name
+    name: Publish Semantic Release
+    runs-on: ubuntu-latest # Use the latest Ubuntu environment
+
+    # Permissions required for the job
+    permissions:
+      contents: write # Needed to create releases and tags
+      issues: write   # Needed to comment on issues
+      pull-requests: write # Needed to comment on pull requests
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch the full commit history for semantic-release
+
+      # Step 2: Setup Node.js environment
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22' # Use Node.js version 22
+          registry-url: 'https://registry.npmjs.org' # Set the npm registry URL
+
+      # Step 3: Install pnpm package manager
+      - name: Setup pnpm
+        run: npm install -g pnpm
+
+      # Step 4: Install project dependencies
+      - name: Install dependencies
+        run: pnpm install
+
+      # Step 5: Build the project
+      - name: Build the project
+        run: pnpm build
+
+      # Step 6: Run semantic-release to handle versioning, changelog, and publishing
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Token for npm authentication
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token for GitHub authentication
+        run: pnpx semantic-release # Execute semantic-release to automate the release process
