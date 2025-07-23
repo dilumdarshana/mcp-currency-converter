@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.0.2...v1.0.3) (2025-07-23)
+
+
+### Bug Fixes
+
+* Round conversion to two decimal places ([f224713](https://github.com/dilumdarshana/mcp-currency-converter/commit/f224713efc92c87f812ce2e862d386aeb327622a))
+
 ## [1.0.2](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.0.1...v1.0.2) (2025-07-23)
 
 
