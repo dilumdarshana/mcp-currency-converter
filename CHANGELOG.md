@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.0.0...v1.0.1) (2025-07-23)
+
+
+### Bug Fixes
+
+* CI/CD in action ([adbfe8c](https://github.com/dilumdarshana/mcp-currency-converter/commit/adbfe8c6ae865a503403a065958deb14f9e222bf))
+
 # 1.0.0 (2025-07-23)
 
 
