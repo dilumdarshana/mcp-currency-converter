@@ -55,7 +55,7 @@ export async function convertCurrency(
     }
 
     // Calculate the converted amount using the exchange rate
-    const convertedAmount = exchangeRate * amount;
+    const convertedAmount = parseFloat((exchangeRate * amount).toFixed(2));
 
     // Use the formatResponse utility to standardize the response format
     return formatResponse({
