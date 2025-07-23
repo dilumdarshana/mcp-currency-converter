@@ -46,7 +46,17 @@ jobs:
       - name: Build the project
         run: pnpm build
 
-      # Step 6: Run semantic-release to handle versioning, changelog, and publishing
+      # Step 6: Run tests to ensure quality
+      # - name: Run tests
+      #   run: pnpm test # Runs tests
+
+      # Step 7: Configure Git identity for releases
+      - name: Configure Git User
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      # Step 8: Run semantic-release to handle versioning, changelog, and publishing
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Token for npm authentication
