@@ -47,8 +47,8 @@ jobs:
         run: pnpm build
 
       # Step 6: Run tests to ensure quality
-      # - name: Run tests
-      #   run: pnpm test # Runs tests
+      - name: Run tests
+        run: pnpm test # Runs tests
 
       # Step 7: Configure Git identity for releases
       - name: Configure Git User
