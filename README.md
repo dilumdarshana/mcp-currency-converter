@@ -85,12 +85,12 @@ Using npm module,
 {
   "mcpServers": {
     "currency-converter": {
-      "command": "pnpx",
-      "args": ["alcorme-mcp-server"],
+      "command": "npx",
+      "args": ["-y", "@alcorme/mcp-currency-converter"],
       "env": {
         "TRANSPORT": "stdio",
         "PORT": "3000",
-        "FREE_CURRENCY_API_KEY": "xxxxx"
+        "FREE_CURRENCY_API_KEY": "xxxxxx"
       }
     }
   }
@@ -105,10 +105,10 @@ Edit the VS Code mcp.json file which is stored in Code/User folder
 
 ```json
 {
-	"servers": {
-		"alcorme-mcp-currency-converter": {
-      "command": "pnpx",
-      "args": ["@alcorme/mcp-currency-converter"],
+  "servers": {
+    "alcorme-mcp-currency-converter": {
+      "command": "npx",
+      "args": ["-y", "@alcorme/mcp-currency-converter"],
       "path": "/Users/dilum/.nvm/versions/node/v22.11.0/bin",
       "env": {
         "TRANSPORT": "stdio",
@@ -116,15 +116,15 @@ Edit the VS Code mcp.json file which is stored in Code/User folder
         "FREE_CURRENCY_API_KEY": "xxxxx"
       }
     }
-	}
+  }
 }
 ```
 
 VS Code Copilot Agent works well with http transport
 ```json
 {
-	"servers": {
-		"alcorme-mcp-currency-converter": {
+  "servers": {
+    "alcorme-mcp-currency-converter": {
       "type": "http",
       "url": "http://localhost:3000/mcp",
       "env": {
@@ -133,7 +133,7 @@ VS Code Copilot Agent works well with http transport
         "FREE_CURRENCY_API_KEY": "xxxxx"
       }
     }
-	}
+  }
 }
 ```
 
