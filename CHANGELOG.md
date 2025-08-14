@@ -1,3 +1,11 @@
+# [1.1.0-next.1](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.0.3...v1.1.0-next.1) (2025-08-14)
+
+
+### Features
+
+* Add historical exchange rates support to the Tool ([8634879](https://github.com/dilumdarshana/mcp-currency-converter/commit/8634879e66ebeb0b57dec3fe0fccc3b78f2c3bc6))
+* Add historical exchange rates support to the Tool ([bb9117b](https://github.com/dilumdarshana/mcp-currency-converter/commit/bb9117b1888a0a78654c40846d8cee1171fd256f))
+
 ## [1.0.3](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.0.2...v1.0.3) (2025-07-23)
 
 
