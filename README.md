@@ -10,7 +10,7 @@ npm install @alcorme/mcp-currency-converter
 
 - **MCP-compliant server** using `@modelcontextprotocol/sdk`
 - **Transport Support**: Stdio, HTTP, and SSE
-- **Currency Conversion**: Real-time exchange rates or mock data
+- **Currency Conversion**: Real-time exchange rates or historical exchange rates
 - **Resource Management**: List supported currencies via resources
 - **Prompt Capability**: Interactive prompts for dynamic input
 - **Unit Testing**: Vitest powered unit testing
@@ -19,6 +19,11 @@ npm install @alcorme/mcp-currency-converter
 - **Authentication for http transport**: TBD
 
 ---
+
+## Example queries
+- Convert 1 USD to EUR
+- Convert 1 USD to EUR on 12 August 2025
+
 
 ## Prerequisites
 - Node.js (tested on v22.11.0)
@@ -50,6 +55,8 @@ $ pnpm test
 
 # Testing with Inspector
 $ pnpm inspector
+
+# If want to test in stdio mode from local, make sure that .env has TRANSPORT=stdio
 ```
 ## Run with http transport
 

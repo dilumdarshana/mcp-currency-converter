@@ -11,3 +11,6 @@ export const VERSION = '1.0.0';
 // The package name for the MCP server
 // This constant specifies the name of the package for identification purposes.
 export const PACKAGE_NAME = '@alcorme/mcp-currency-converter';
+
+// Base path of the currency conversion API
+export const CURRENCY_ENDPOINT_BASE = 'https://api.freecurrencyapi.com/v1';
