@@ -19,7 +19,7 @@ describe('convertCurrency', () => {
     global.fetch = vi.fn();
   });
 
-  it('should convert currency successfully', async () => {
+  it('should convert currency successfully without date', async () => {
     // Mock the API response
     (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({
@@ -32,7 +32,24 @@ describe('convertCurrency', () => {
       mockLogger
     );
 
-    expect(result.content[0].text).toContain('Converted 100 USD to EUR: 85 EUR');
+    expect(result.content[0].text).toContain('Converted 100 USD to EUR on latest: 85 EUR');
+    expect(mockLogger.info).toHaveBeenCalledWith('Converting 100 USD to EUR...');
+  });
+
+  it('should convert currency successfully with date', async () => {
+    // Mock the API response
+    (global.fetch as any).mockResolvedValueOnce({
+      json: async () => ({
+        data: { '2025-08-12': { EUR: 0.85 } },
+      }),
+    });
+
+    const result = await convertCurrency(
+      { fromCurrency: 'USD', toCurrency: 'EUR', amount: 100, date: '12-08-2025' },
+      mockLogger
+    );
+
+    expect(result.content[0].text).toContain('Converted 100 USD to EUR on 12 August 2025: 85 EUR');
     expect(mockLogger.info).toHaveBeenCalledWith('Converting 100 USD to EUR...');
   });
 

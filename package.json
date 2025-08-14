@@ -1,6 +1,6 @@
 {
   "name": "@alcorme/mcp-currency-converter",
-  "version": "1.0.2-next.1",
+  "version": "1.0.3",
   "author": "Dilum Darshana <dilum.dar@gmail.com>",
   "description": "A Model Context Protocol (MCP) server for currency conversion, providing tools and resources for seamless integration.",
   "keywords": [
@@ -10,6 +10,10 @@
   ],
   "license": "ISC",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dilumdarshana/mcp-currency-converter.git"
+  },
   "bin": {
     "alcorme-mcp-server": "./dist/index.js"
   },
@@ -29,6 +33,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.1",
     "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "zod": "^3.25.67"
