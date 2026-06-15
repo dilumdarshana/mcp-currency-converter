@@ -23,13 +23,13 @@
     "build:dev": "tsx --watch src/index.ts",
     "mcp:stdio": "pnpm build && TRANSPORT=stdio node dist/index.js",
     "mcp:http": "pnpm build && TRANSPORT=http node dist/index.js",
-    "inspector": "pnpm build && DANGEROUSLY_OMIT_AUTH=true pnpx @modelcontextprotocol/inspector",
+    "inspector": "pnpm build && DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector node dist/index.js",
     "semantic-release": "semantic-release",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "coverage": "vitest run --coverage"
   },
-  "packageManager": "pnpm@10.7.0",
+  "packageManager": "pnpm@11.5.2",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.15.1",
     "cors": "^2.8.5",
@@ -39,14 +39,14 @@
     "zod": "^3.25.67"
   },
   "devDependencies": {
-    "@modelcontextprotocol/inspector": "^0.16.1",
+    "@modelcontextprotocol/inspector": "^0.22.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.3",
     "@semantic-release/npm": "^12.0.2",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
-    "@types/node": "^20.19.8",
+    "@types/node": "^24.13.2",
     "@vitest/coverage-v8": "^3.2.4",
     "semantic-release": "^24.2.7",
     "tsx": "^4.20.3",
