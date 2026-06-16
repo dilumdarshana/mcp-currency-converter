@@ -8,7 +8,7 @@ import { createSseTransport } from './transport/sseTransport.js';
 import { registerPrompts, registerResources, registerTools } from './utils/registrations.js';
 
 // Load environment variables from .env file to configure the application
-dotenv.config();
+dotenv.config({ quiet: true });
 
 /**
  * Creates and initializes the MCP server with the chosen transport.
@@ -24,12 +24,14 @@ export function createMcpServer() {
   const server = new McpServer({
     name: PACKAGE_NAME, // Name of the package
     version: VERSION,   // Version of the package
-    capabilities: {
-      resources: {}, // Placeholder for custom resources
-      tools: {},     // Placeholder for tools
-      prompts: {},   // Placeholder for prompts
-    },
-  });
+  },
+    {
+      capabilities: {
+        resources: {}, // Placeholder for custom resources
+        tools: {},     // Placeholder for tools
+        prompts: {},   // Placeholder for prompts
+      },
+    });
 
   // Register tools and resources to the server
   registerTools(server, logger); // Add tools for server functionality

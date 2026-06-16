@@ -30,7 +30,7 @@ describe('listCurrencies', () => {
     const uri = new URL('https://example.com/resource');
     const result = await listCurrencies(uri, mockLogger);
 
-    expect(result.contents[0].text).toContain('USD, EUR');
+    expect((result.contents[0] as { uri: string; text: string; mimeType?: string }).text).toContain('USD, EUR');
     expect(mockLogger.info).toHaveBeenCalledWith('Supported currencies: USD, EUR');
   });
 

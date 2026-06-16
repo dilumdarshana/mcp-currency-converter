@@ -40,7 +40,6 @@ export async function listCurrencies(
         uri: uri.toString(), // The URI of the resource
         text: currencies,    // The list of currencies as a comma-separated string
         mimeType: 'text/plain', // The MIME type of the response
-        description: 'List of supported currencies', // A description of the response
       },
     ],
   };

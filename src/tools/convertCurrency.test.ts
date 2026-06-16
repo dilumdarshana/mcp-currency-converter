@@ -32,7 +32,7 @@ describe('convertCurrency', () => {
       mockLogger
     );
 
-    expect(result.content[0].text).toContain('Converted 100 USD to EUR on latest: 85 EUR');
+    expect((result.content[0] as { type: 'text'; text: string }).text).toContain('Converted 100 USD to EUR on latest: 85 EUR');
     expect(mockLogger.info).toHaveBeenCalledWith('Converting 100 USD to EUR...');
   });
 
@@ -49,7 +49,7 @@ describe('convertCurrency', () => {
       mockLogger
     );
 
-    expect(result.content[0].text).toContain('Converted 100 USD to EUR on 12 August 2025: 85 EUR');
+    expect((result.content[0] as { type: 'text'; text: string }).text).toContain('Converted 100 USD to EUR on 12 August 2025: 85 EUR');
     expect(mockLogger.info).toHaveBeenCalledWith('Converting 100 USD to EUR...');
   });
 
@@ -74,7 +74,7 @@ describe('convertCurrency', () => {
     );
 
     // Validate the content array for the error message
-    expect(result.content[0].text).toContain('Error: Invalid exchange rate');
+    expect((result.content[0] as { type: 'text'; text: string }).text).toContain('Error: Invalid exchange rate');
     expect(mockLogger.error).toHaveBeenCalled();
   });
 });

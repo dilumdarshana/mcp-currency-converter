@@ -10,16 +10,18 @@ import { currencyPromptSchema, handleCurrencyPrompt } from '../prompts/currencyP
  * @param logger The logger instance
  */
 export function registerTools(server: McpServer, logger: Logger) {
-  server.tool(
+  server.registerTool(
     'convert-currency',
-    'Converts an amount from one currency to another',
-    convertCurrencySchema.shape,
     {
-      title: 'convert-currency',
-      readOnlyHint: false,
-      destructiveHint: false,
-      idempotentHint: false,
-      openWorldHint: true,
+      description: 'Converts an amount from one currency to another',
+      inputSchema: convertCurrencySchema,
+      annotations: {
+        title: 'convert-currency',
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
     },
     (input) => convertCurrency(input, logger),
   );
@@ -31,7 +33,7 @@ export function registerTools(server: McpServer, logger: Logger) {
  * @param logger The logger instance
  */
 export function registerResources(server: McpServer, logger: Logger) {
-  server.resource(
+  server.registerResource(
     'list-currencies',
     'list-currencies://list',
     {
@@ -49,10 +51,12 @@ export function registerResources(server: McpServer, logger: Logger) {
  * @param logger The logger instance
  */
 export function registerPrompts(server: McpServer, logger: Logger) {
-  server.prompt(
+  server.registerPrompt(
     'currency-conversion-prompt',
-    'Prompt for currency conversion details',
-    currencyPromptSchema.shape,
+    {
+      description: 'Prompt for currency conversion details',
+      argsSchema: currencyPromptSchema.shape,
+    },
     (input) => handleCurrencyPrompt(input, logger),
   );
 }

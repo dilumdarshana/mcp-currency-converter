@@ -3,7 +3,7 @@
 A currency converter created with Model Context Protocol (MCP) servers using the `@modelcontextprotocol/sdk`. This server exposes currency conversion as an MCP tool and resource, allowing LLMs or clients to convert between currencies or list supported currencies via MCP.
 
 ```bash
-npm install @alcorme/mcp-currency-converter
+pnpm add @alcorme/mcp-currency-converter
 ```
 
 ## Features
@@ -26,7 +26,7 @@ npm install @alcorme/mcp-currency-converter
 
 
 ## Prerequisites
-- Node.js (tested on v22.11.0)
+- Node.js >=24
 - API key from https://freecurrencyapi.com
 - pnpm
 
@@ -36,46 +36,80 @@ npm install @alcorme/mcp-currency-converter
 # Clone repository
 $ git clone git@github.com:dilumdarshana/mcp-currency-converter.git
 
-# Set prefered Node.js version
+# Use the correct Node.js version
 $ nvm use
 
-# Create .env file from .env_example with correct values
+# Create .env file from .env_sample with your API key
+$ cp .env_sample .env
 
-# Install dependecies
+# Install dependencies
 $ pnpm install
 
-# Watch changes
+# Watch mode (no rebuild needed)
 $ pnpm build:dev
 
-# Build
+# Build for production
 $ pnpm build
 
-# Testing
+# Run tests
 $ pnpm test
 
-# Testing with Inspector
+# Test with MCP Inspector
 $ pnpm inspector
-
-# If want to test in stdio mode from local, make sure that .env has TRANSPORT=stdio
-```
-## Run with http transport
-
-```bash
-$ pnpm build:dev
 ```
 
 ## Integrate with Claude Desktop
 
-Add to your Claude Desktop configuration:
+Add to your Claude Desktop configuration (`claude_desktop_config.json`):
 
-Using clone the git repository to the local and need build,
+Using a local build,
 
 ```json
 {
   "mcpServers": {
     "currency-converter": {
-      "command": "/Users/xxxx/.nvm/versions/node/v22.11.0/bin/node",
-      "args": ["/private/var/www/github/mcp-currency-converter/dist/index.js"],
+      "command": "node",
+      "args": ["/path/to/mcp-currency-converter/dist/index.js"],
+      "env": {
+        "TRANSPORT": "stdio",
+        "PORT": "3000",
+        "FREE_CURRENCY_API_KEY": "xxxxx"
+      }
+    }
+  }
+}
+```
+
+Using the npm module (no local build needed),
+
+```json
+{
+  "mcpServers": {
+    "currency-converter": {
+      "command": "npx",
+      "args": ["-y", "@alcorme/mcp-currency-converter"],
+      "env": {
+        "TRANSPORT": "stdio",
+        "PORT": "3000",
+        "FREE_CURRENCY_API_KEY": "xxxxx"
+      }
+    }
+  }
+}
+```
+
+## Integrate with VS Code GitHub Copilot
+
+Edit VS Code's `mcp.json` (`.vscode/mcp.json` in your project or the global User `mcp.json`):
+
+Using stdio (local build),
+
+```json
+{
+  "servers": {
+    "currency-converter": {
+      "command": "node",
+      "args": ["/path/to/mcp-currency-converter/dist/index.js"],
       "env": {
         "TRANSPORT": "stdio",
         "PORT": "3000",
@@ -90,33 +124,48 @@ Using npm module,
 
 ```json
 {
-  "mcpServers": {
+  "servers": {
     "currency-converter": {
       "command": "npx",
       "args": ["-y", "@alcorme/mcp-currency-converter"],
       "env": {
         "TRANSPORT": "stdio",
-        "PORT": "3000",
-        "FREE_CURRENCY_API_KEY": "xxxxxx"
+        "FREE_CURRENCY_API_KEY": "xxxxx"
       }
     }
   }
 }
 ```
 
-Claude does not work well with http. I need to research it further
-
-## Integrate with VS Code Github Copilot
-
-Edit the VS Code mcp.json file which is stored in Code/User folder
+Using HTTP transport (works well with VS Code Copilot Agent),
 
 ```json
 {
   "servers": {
-    "alcorme-mcp-currency-converter": {
-      "command": "npx",
-      "args": ["-y", "@alcorme/mcp-currency-converter"],
-      "path": "/Users/dilum/.nvm/versions/node/v22.11.0/bin",
+    "currency-converter": {
+      "type": "http",
+      "url": "http://localhost:3000/mcp",
+      "env": {
+        "TRANSPORT": "http",
+        "FREE_CURRENCY_API_KEY": "xxxxx"
+      }
+    }
+  }
+}
+```
+
+## Integrate with OpenCode
+
+OpenCode uses its own MCP server configuration. Add to your `opencode.json` or `.opencode.json`:
+
+Using a local build,
+
+```json
+{
+  "mcp": {
+    "currency-converter": {
+      "type": "local",
+      "command": ["node", "/path/to/mcp-currency-converter/dist/index.js"],
       "env": {
         "TRANSPORT": "stdio",
         "PORT": "3000",
@@ -127,15 +176,16 @@ Edit the VS Code mcp.json file which is stored in Code/User folder
 }
 ```
 
-VS Code Copilot Agent works well with http transport
+Using the npm module,
+
 ```json
 {
-  "servers": {
-    "alcorme-mcp-currency-converter": {
-      "type": "http",
-      "url": "http://localhost:3000/mcp",
+  "mcp": {
+    "currency-converter": {
+      "type": "local",
+      "command": ["npx", "-y", "@alcorme/mcp-currency-converter"],
       "env": {
-        "TRANSPORT": "http",
+        "TRANSPORT": "stdio",
         "PORT": "3000",
         "FREE_CURRENCY_API_KEY": "xxxxx"
       }
@@ -143,9 +193,6 @@ VS Code Copilot Agent works well with http transport
   }
 }
 ```
-
-## Integrate with Typescript MCP Client
-TBD
 
 ## License
 
