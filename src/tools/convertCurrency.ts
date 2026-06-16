@@ -81,7 +81,7 @@ export async function convertCurrency(
       exchangeRate = historicalData?.[toCurrency];
     } else {
       // Latest response structure
-      exchangeRate = data.data[toCurrency] as number;
+      exchangeRate = (data as any)?.data?.[toCurrency] as number;
     }
 
     // Throw an error if the exchange rate is invalid or missing

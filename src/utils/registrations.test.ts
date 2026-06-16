@@ -7,9 +7,9 @@ import { currencyPromptSchema } from '../prompts/currencyPrompt.js';
 
 describe('MCP Server Registrations', () => {
   const mockServer = {
-    tool: vi.fn(),
-    resource: vi.fn(),
-    prompt: vi.fn(),
+    registerTool: vi.fn(),
+    registerResource: vi.fn(),
+    registerPrompt: vi.fn(),
   } as unknown as McpServer;
 
   const mockLogger: Logger = {
@@ -23,17 +23,19 @@ describe('MCP Server Registrations', () => {
   it('should register tools correctly', () => {
     registerTools(mockServer, mockLogger);
 
-    expect(mockServer.tool).toHaveBeenCalledWith(
+    expect(mockServer.registerTool).toHaveBeenCalledWith(
       'convert-currency',
-      'Converts an amount from one currency to another',
-      convertCurrencySchema.shape,
-      expect.objectContaining({
-        title: 'convert-currency',
-        readOnlyHint: false,
-        destructiveHint: false,
-        idempotentHint: false,
-        openWorldHint: true,
-      }),
+      {
+        description: 'Converts an amount from one currency to another',
+        inputSchema: convertCurrencySchema,
+        annotations: {
+          title: 'convert-currency',
+          readOnlyHint: false,
+          destructiveHint: false,
+          idempotentHint: false,
+          openWorldHint: true,
+        },
+      },
       expect.any(Function)
     );
   });
@@ -41,14 +43,14 @@ describe('MCP Server Registrations', () => {
   it('should register resources correctly', () => {
     registerResources(mockServer, mockLogger);
 
-    expect(mockServer.resource).toHaveBeenCalledWith(
+    expect(mockServer.registerResource).toHaveBeenCalledWith(
       'list-currencies',
       'list-currencies://list',
-      expect.objectContaining({
+      {
         description: 'Lists all supported currencies',
         title: 'list-currencies',
         mimeType: 'text/plain',
-      }),
+      },
       expect.any(Function)
     );
   });
@@ -56,10 +58,12 @@ describe('MCP Server Registrations', () => {
   it('should register prompts correctly', () => {
     registerPrompts(mockServer, mockLogger);
 
-    expect(mockServer.prompt).toHaveBeenCalledWith(
+    expect(mockServer.registerPrompt).toHaveBeenCalledWith(
       'currency-conversion-prompt',
-      'Prompt for currency conversion details',
-      currencyPromptSchema.shape,
+      {
+        description: 'Prompt for currency conversion details',
+        argsSchema: currencyPromptSchema.shape,
+      },
       expect.any(Function)
     );
   });

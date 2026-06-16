@@ -13,7 +13,8 @@
     "strictNullChecks": true,
     "noUnusedLocals": false,
     "noUnusedParameters": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "express", "cors"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
