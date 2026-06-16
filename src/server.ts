@@ -8,7 +8,7 @@ import { createSseTransport } from './transport/sseTransport.js';
 import { registerPrompts, registerResources, registerTools } from './utils/registrations.js';
 
 // Load environment variables from .env file to configure the application
-dotenv.config();
+dotenv.config({ quiet: true });
 
 /**
  * Creates and initializes the MCP server with the chosen transport.
