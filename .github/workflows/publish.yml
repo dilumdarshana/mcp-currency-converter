@@ -19,6 +19,7 @@ jobs:
       contents: write # Needed to create releases and tags
       issues: write   # Needed to comment on issues
       pull-requests: write # Needed to comment on pull requests
+      id-token: write # Needed for npm OIDC trusted publisher
 
     steps:
       # Step 1: Checkout the repository
@@ -31,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Use Node.js version 22
+          node-version: '24' # Use Node.js version 24
           registry-url: 'https://registry.npmjs.org' # Set the npm registry URL
 
       # Step 3: Install pnpm package manager
@@ -59,6 +60,5 @@ jobs:
       # Step 8: Run semantic-release to handle versioning, changelog, and publishing
       - name: Publish to npm
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Token for npm authentication
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Token for GitHub authentication
         run: pnpx semantic-release # Execute semantic-release to automate the release process
