@@ -166,7 +166,7 @@ Using a local build,
     "currency-converter": {
       "type": "local",
       "command": ["node", "/path/to/mcp-currency-converter/dist/index.js"],
-      "env": {
+      "environment": {
         "TRANSPORT": "stdio",
         "PORT": "3000",
         "FREE_CURRENCY_API_KEY": "xxxxx"
@@ -184,7 +184,7 @@ Using the npm module,
     "currency-converter": {
       "type": "local",
       "command": ["npx", "-y", "@alcorme/mcp-currency-converter"],
-      "env": {
+      "environment": {
         "TRANSPORT": "stdio",
         "PORT": "3000",
         "FREE_CURRENCY_API_KEY": "xxxxx"
