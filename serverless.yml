@@ -1,26 +1,30 @@
 # Serverless Framework v4 native MCP deployment.
 #
-# `mcp.servers.currency-converter.server` points at the compiled Lambda entry
-# (src/serverless.ts -> dist/serverless.js), whose default export is what
-# `createMcpHandler()` returns — a web-standard fetch handler. The Framework
-# owns the REST endpoint, response streaming, packaging, and the Lambda entry
-# that bridges its streaming runtime to that handler.
+# `mcp.servers.currency-converter.server` points at the bundled Lambda entry
+# (src/serverless.ts bundled to dist/serverless.mjs by esbuild), whose default
+# export is what `createMcpHandler()` returns — a web-standard fetch handler.
+# The Framework owns the REST endpoint, response streaming, packaging, and the
+# Lambda entry that bridges its streaming runtime to that handler.
 service: mcp-currency-converter
 frameworkVersion: '4'
 
 provider:
   name: aws
-  region: ${env:AWS_REGION, 'us-east-1'}
+  region: ${env:AWS_REGION, 'us-west-2'}
   stage: ${opt:stage, 'prod'}
   runtime: nodejs24.x # MCP SDK requires Node.js 20 or newer
   # Regional endpoints keep a response stream alive through ~5 minutes of
   # silence (edge-optimized endpoints cut it at ~30s).
   endpointType: REGIONAL
 
-# Classic zip packaging ships dist/ + production node_modules. Exclude secrets
-# and build/test artifacts from the Lambda package.
+# The serverless entry is esbuild-bundled into a single self-contained
+# dist/serverless.mjs (see the `build` script in package.json), so the Lambda
+# package needs no node_modules. Exclude secrets and build/test artifacts.
 package:
   patterns:
+    - '!node_modules/**'
+    - '!.serverless/**'
+    - '!serverless-mcp/**'
     - '!.env'
     - '!.github/**'
     - '!coverage/**'
@@ -38,7 +42,7 @@ mcp:
     # The server name is the function key, the Lambda name suffix, and the URL
     # path segment: served at /currency-converter/mcp.
     currency-converter:
-      server: dist/serverless.js
+      server: dist/serverless.mjs
       timeout: 30
       environment:
         FREE_CURRENCY_API_KEY: ${env:FREE_CURRENCY_API_KEY}
