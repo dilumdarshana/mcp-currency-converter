@@ -9,6 +9,7 @@
     "model-context-protocol"
   ],
   "license": "ISC",
+  "type": "module",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
@@ -23,8 +24,10 @@
     "build:dev": "tsx --watch src/index.ts",
     "mcp:stdio": "pnpm build && TRANSPORT=stdio node dist/index.js",
     "mcp:http": "pnpm build && TRANSPORT=http node dist/index.js",
-    "inspector": "pnpm build && DANGEROUSLY_OMIT_AUTH=true npx @modelcontextprotocol/inspector",
+    "inspector": "pnpm build && DANGEROUSLY_OMIT_AUTH=true mcp-inspector node dist/index.js",
+    "inspector-http": "pnpm build && (TRANSPORT=http node dist/index.js &) && sleep 2 && DANGEROUSLY_OMIT_AUTH=true mcp-inspector http://localhost:3000/mcp",
     "semantic-release": "semantic-release",
+    "release:dry-run": "semantic-release --dry-run",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "coverage": "vitest run --coverage"
@@ -34,7 +37,8 @@
     "node": ">=24"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/node": "^2.0.0",
+    "@modelcontextprotocol/server": "^2.0.0",
     "cors": "^2.8.6",
     "dayjs": "^1.11.21",
     "dotenv": "^17.4.2",
@@ -42,7 +46,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@modelcontextprotocol/inspector": "^0.22.0",
+    "@modelcontextprotocol/inspector": "^2.1.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^11.0.5",

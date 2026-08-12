@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { handleCurrencyPrompt } from './currencyPrompt';
-import { Logger } from '../utils/logger';
+import { handleCurrencyPrompt } from './currencyPrompt.js';
+import { Logger } from '../utils/logger.js';
 
 const mockLogger: Logger = {
   info: vi.fn(),

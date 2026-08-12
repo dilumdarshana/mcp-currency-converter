@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from '@modelcontextprotocol/server';
 import { Logger } from './logger.js';
 import { convertCurrency, convertCurrencySchema } from '../tools/convertCurrency.js';
 import { listCurrencies } from '../resources/listCurrencies.js';
@@ -13,6 +13,7 @@ export function registerTools(server: McpServer, logger: Logger) {
   server.registerTool(
     'convert-currency',
     {
+      title: 'convert-currency',
       description: 'Converts an amount from one currency to another',
       inputSchema: convertCurrencySchema,
       annotations: {

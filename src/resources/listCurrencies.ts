@@ -1,4 +1,4 @@
-import { ReadResourceResult } from '@modelcontextprotocol/sdk/types.js';
+import type { ReadResourceResult } from '@modelcontextprotocol/server';
 import { Logger } from '../utils/logger.js';
 
 /**

@@ -1,96 +1,41 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import { randomUUID } from 'node:crypto';
-import type { Request, Response } from 'express';
+import { createMcpHandler, type McpServer } from '@modelcontextprotocol/server';
+import { toNodeHandler } from '@modelcontextprotocol/node';
 import express from 'express';
 import cors from 'cors';
-import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
-import { Logger } from '../utils/logger';
+import { Logger } from '../utils/logger.js';
 
 /**
  * Creates an instance of the MCP HTTP transport.
  * This allows communication over HTTP for remote use.
+ *
+ * The v2 SDK exposes a web-standard handler (`createMcpHandler`) which is
+ * adapted to a Node/Express middleware via `toNodeHandler`. The transport is
+ * stateless — no session IDs are negotiated and a fresh server is built per
+ * request via the factory.
+ *
+ * @param factory Builds a fresh server instance per request
+ * @param logger The logger instance
  */
-export function createHttpTransport(server: McpServer, logger: Logger) {
+export function createHttpTransport(factory: () => McpServer, logger: Logger) {
   const app = express();
-  app.use(cors({
-    origin: '*', // Configure appropriately for production, for example:
-    // origin: ['https://your-remote-domain.com', 'https://your-other-remote-domain.com'],
-    exposedHeaders: ['Mcp-Session-Id'],
-    allowedHeaders: ['Content-Type', 'mcp-session-id'],
-  }));
-  app.use(express.json());
+  app.use(
+    cors({
+      origin: '*', // Configure appropriately for production, for example:
+      // origin: ['https://your-remote-domain.com', 'https://your-other-remote-domain.com'],
+    }),
+  );
 
-  const transports = new Map<string, StreamableHTTPServerTransport>();
-
-  app.all('/mcp', async (req: Request, res: Response) => {
-    logger.info('Calling MCP all endpoint');
-    const sessionId = req.headers['mcp-session-id'] as string | undefined;
-    let transport: StreamableHTTPServerTransport;
-
-    if (sessionId && transports.has(sessionId)) {
-      // Reuse existing transport
-      transport = transports.get(sessionId)!;
-    } else if (!sessionId && isInitializeRequest(req.body)) {
-      transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: () => sessionId || randomUUID(),
-        onsessioninitialized: (sessionId) => {
-          // Store the transport by session ID
-          transports.set(sessionId, transport);
-        },
-      });
-      transports.set(transport.sessionId!, transport);
-
-      server.connect(transport);
-
-      transport.onclose = () => {
-        transports.delete(transport.sessionId!);
-      };
-    } else {
-      // Invalid request
-      res.status(400).json({
-        jsonrpc: '2.0',
-        error: {
-          code: -32000,
-          message: 'Bad Request: No valid session ID provided',
-        },
-        id: null,
-      });
-      return;
-    }
-
-    await transport.handleRequest(req, res, req.body);
+  const handler = createMcpHandler(factory, {
+    onerror: (error) => logger.error(`MCP HTTP handler error: ${error}`),
   });
+  const mcpHandler = toNodeHandler(handler);
+
+  // MCP endpoint for the streamable HTTP transport
+  app.all('/mcp', mcpHandler);
 
   // Health check endpoint
-  app.get('/', (_req: Request, res: Response) => {
-    res.send(`Convert Currency MCP Server is running`);
-  });
-
-  app.get('/mcp', async (req: Request, res: Response) => {
-    const sessionId = req.headers['mcp-session-id'] as string | undefined;
-
-    if (!sessionId || !transports.has(sessionId)) {
-      res.status(400).send('Invalid or missing session ID');
-      return;
-    }
-
-    const transport = transports.get(sessionId)!;
-
-    await transport.handleRequest(req, res);
-  });
-
-  app.delete('/mcp', async (req: Request, res: Response) => {
-    const sessionId = req.headers['mcp-session-id'] as string | undefined;
-
-    if (!sessionId || !transports.has(sessionId)) {
-      res.status(400).send('Invalid or missing session ID');
-      return;
-    }
-
-    const transport = transports.get(sessionId)!;
-
-    await transport.handleRequest(req, res);
+  app.get('/', (_req: express.Request, res: express.Response) => {
+    res.send('Convert Currency MCP Server is running');
   });
 
   // Start the server

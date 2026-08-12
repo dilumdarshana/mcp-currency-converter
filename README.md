@@ -1,6 +1,6 @@
 # TypeScript-based MCP Currency Converter
 
-A currency converter created with Model Context Protocol (MCP) servers using the `@modelcontextprotocol/sdk`. This server exposes currency conversion as an MCP tool and resource, allowing LLMs or clients to convert between currencies or list supported currencies via MCP.
+A currency converter created with Model Context Protocol (MCP) servers using the v2 TypeScript SDK (`@modelcontextprotocol/server` and `@modelcontextprotocol/node`). This server exposes currency conversion as an MCP tool and resource, allowing LLMs or clients to convert between currencies or list supported currencies via MCP.
 
 ```bash
 pnpm add @alcorme/mcp-currency-converter
@@ -8,8 +8,8 @@ pnpm add @alcorme/mcp-currency-converter
 
 ## Features
 
-- **MCP-compliant server** using `@modelcontextprotocol/sdk`
-- **Transport Support**: Stdio, HTTP, and SSE
+- **MCP-compliant server** using `@modelcontextprotocol/server` v2 (stateless, no session handshake)
+- **Transport Support**: Stdio and Streamable HTTP (stateless)
 - **Currency Conversion**: Real-time exchange rates or historical exchange rates
 - **Resource Management**: List supported currencies via resources
 - **Prompt Capability**: Interactive prompts for dynamic input
@@ -54,8 +54,11 @@ $ pnpm build
 # Run tests
 $ pnpm test
 
-# Test with MCP Inspector
+# Test with MCP Inspector (stdio)
 $ pnpm inspector
+
+# Test with MCP Inspector (http, starts server on :3000 automatically)
+$ pnpm inspector-http
 ```
 
 ## Integrate with Claude Desktop

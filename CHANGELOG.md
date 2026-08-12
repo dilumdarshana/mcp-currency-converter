@@ -1,3 +1,13 @@
+# [2.0.0](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.1.0...v2.0.0) (2026-06-17)
+
+
+* chore!: specify node >=24 engine requirement ([4c225f8](https://github.com/dilumdarshana/mcp-currency-converter/commit/4c225f8714eb6b352760fc0de788965067440730))
+
+
+### BREAKING CHANGES
+
+* require Node.js >=24, update to zod 4, TypeScript 6, and migrate MCP SDK API
+
 # [1.1.0](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.0.3...v1.1.0) (2025-08-14)
 
 

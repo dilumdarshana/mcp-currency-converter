@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from '@modelcontextprotocol/server';
 import { Logger } from './logger.js';
-import { registerTools, registerResources, registerPrompts } from './registrations';
+import { registerTools, registerResources, registerPrompts } from './registrations.js';
 import { convertCurrencySchema } from '../tools/convertCurrency.js';
 import { currencyPromptSchema } from '../prompts/currencyPrompt.js';
 
@@ -26,6 +26,7 @@ describe('MCP Server Registrations', () => {
     expect(mockServer.registerTool).toHaveBeenCalledWith(
       'convert-currency',
       {
+        title: 'convert-currency',
         description: 'Converts an amount from one currency to another',
         inputSchema: convertCurrencySchema,
         annotations: {

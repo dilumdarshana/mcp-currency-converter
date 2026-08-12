@@ -4,9 +4,9 @@
  * calculates the converted amount, and returns the result in a structured format.
  */
 import { z } from 'zod';
-import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
+import type { CallToolResult } from '@modelcontextprotocol/server';
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import customParseFormat from 'dayjs/plugin/customParseFormat.js';
 import { Logger } from '../utils/logger.js';
 import { CurrencyApiResponse } from '../types.js';
 import { formatResponse } from '../utils/mcpResponse.js';

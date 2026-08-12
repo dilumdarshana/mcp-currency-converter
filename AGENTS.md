@@ -10,13 +10,15 @@ pnpm coverage          # vitest --coverage
 pnpm mcp:stdio         # build + run stdio mode
 pnpm mcp:http          # build + run http mode
 pnpm build:dev         # tsx --watch (no rebuild needed)
-pnpm inspector         # build + launch MCP Inspector
+pnpm inspector         # build + launch MCP Inspector (stdio)
+pnpm inspector-http    # build + start http server on :3000 + launch MCP Inspector
 ```
 
 ## Architecture
 - **Entry**: `src/index.ts` → `src/server.ts` → `src/utils/registrations.ts`
-- **MCP SDK `^1.29.0`**: Uses `registerTool()` / `registerResource()` / `registerPrompt()` (NOT the deprecated `tool()` / `resource()` / `prompt()`)
-- **3 transports**: `TRANSPORT=stdio` (default), `http`, `sse`
+- **MCP SDK v2 `^2.0.0`**: Uses `@modelcontextprotocol/server` (`McpServer`, `createMcpHandler`) + `@modelcontextprotocol/node` (`toNodeHandler`) — NOT the deprecated `@modelcontextprotocol/sdk`
+- **Factory-based**: `serveStdio(factory)` / `createMcpHandler(factory)` build a fresh `McpServer` per request (stateless — no initialize handshake, no `Mcp-Session-Id`)
+- **2 transports**: `TRANSPORT=stdio` (default when unset), `http` (SSE transport removed in v2)
 - **1 tool**: `convert-currency` — `z.object({ fromCurrency, toCurrency, amount, date? })`
 - **1 resource**: `list-currencies`
 - **1 prompt**: `currency-conversion-prompt`
@@ -28,6 +30,13 @@ pnpm inspector         # build + launch MCP Inspector
 - **SDK union types**: `result.content[0]` needs `as { type: 'text'; text: string }` cast in tests for strict TS 6.0 discriminated unions.
 - **vitest v4 ESM-only**: `vitest.config.ts` must exclude `dist/` to avoid CJS crash. vitest config in `package.json` not recognized.
 - **TypeScript 6.0**: `tsconfig.json` must include `"types": ["node", "express", "cors"]` — these are no longer auto-included.
+- **`"type": "module"` required**: v2 SDK packages are ESM-only. All relative imports (incl. tests) must use `.js` extensions; dayjs plugin imports need the explicit `.js` suffix (`dayjs/plugin/customParseFormat.js`).
+- **No `express.json()` in httpTransport**: `toNodeHandler` parses the request body itself — adding `express.json()` first drains the stream and causes `Parse error: Invalid JSON`.
+- **HTTP client must accept `application/json, text/event-stream`**: otherwise the v2 handler returns 406 `Not Acceptable`.
+- **inspector script**: uses `mcp-inspector node dist/index.js` (v2 CLI), not `npx @modelcontextprotocol/inspector`.
+- **pnpm-workspace.yaml**: `allowBuilds` must keep `@modelcontextprotocol/inspector: true` (its postinstall builds the CLI).
+- **stdio is the default transport**: `TRANSPORT` unset → stdio. Do **not** set `TRANSPORT` in `.env` — dotenv would override the default and force HTTP.
+- **MCP Inspector filters env**: its `StdioClientTransport` spawns the server with only `HOME/LOGNAME/PATH/SHELL/TERM/USER` + env configured in the UI. Any required env (e.g. `FREE_CURRENCY_API_KEY`) must be added in the Inspector's server config "Environment" panel; shell env vars like `TRANSPORT=stdio` are NOT inherited.
 
 ## Tests
 ```bash
