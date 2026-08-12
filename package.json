@@ -19,7 +19,7 @@
     "alcorme-mcp-server": "./dist/index.js"
   },
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('dist/index.js', '755')\"",
+    "build": "tsc && node -e \"require('fs').chmodSync('dist/index.js', '755')\" && esbuild src/serverless.ts --bundle --platform=node --format=esm --outfile=dist/serverless.mjs",
     "build:watch": "tsc --watch",
     "build:dev": "tsx --watch src/index.ts",
     "mcp:stdio": "pnpm build && TRANSPORT=stdio node dist/index.js",
@@ -55,6 +55,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
     "@vitest/coverage-v8": "^4.1.10",
+    "esbuild": "^0.28.1",
     "semantic-release": "^25.0.9",
     "tsx": "^4.23.12",
     "typescript": "^6.0.0",
