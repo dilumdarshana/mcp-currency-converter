@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { randomUUID } from 'node:crypto';
+import { Writable } from 'node:stream';
 
 /**
  * Format a timestamp for logging
@@ -21,8 +22,8 @@ class Logger {
   private logFilePath: string;
   private errorFilePath: string;
   private sessionId: string;
-  private logStream: fs.WriteStream;
-  private errorStream: fs.WriteStream;
+  private logStream: Writable;
+  private errorStream: Writable;
 
   constructor() {
     this.sessionId = randomUUID();
@@ -30,16 +31,25 @@ class Logger {
     const homeDir = os.homedir();
     const mcpLogDir = path.join(homeDir, '.mcp', 'logs');
 
-    fs.mkdirSync(mcpLogDir, { recursive: true });
+    try {
+      fs.mkdirSync(mcpLogDir, { recursive: true });
 
-    const timestamp = getTimestamp(); 
-    const baseFileName = `${timestamp}.${this.sessionId}`;
+      const timestamp = getTimestamp();
+      const baseFileName = `${timestamp}.${this.sessionId}`;
 
-    this.logFilePath = path.join(mcpLogDir, `${baseFileName}.log`);
-    this.errorFilePath = path.join(mcpLogDir, `${baseFileName}.error.log`);
+      this.logFilePath = path.join(mcpLogDir, `${baseFileName}.log`);
+      this.errorFilePath = path.join(mcpLogDir, `${baseFileName}.error.log`);
 
-    this.logStream = fs.createWriteStream(this.logFilePath, { flags: 'a' });
-    this.errorStream = fs.createWriteStream(this.errorFilePath, { flags: 'a' });
+      this.logStream = fs.createWriteStream(this.logFilePath, { flags: 'a' });
+      this.errorStream = fs.createWriteStream(this.errorFilePath, { flags: 'a' });
+    } catch {
+      // Fall back to console output when the home directory is not writable
+      // (e.g. in Lambda, where $HOME does not exist and /tmp is ephemeral).
+      this.logFilePath = '';
+      this.errorFilePath = '';
+      this.logStream = process.stdout;
+      this.errorStream = process.stderr;
+    }
 
     this.info('Logger initialized');
   }
@@ -89,8 +99,12 @@ class Logger {
   }
 
   close() {
-    this.logStream.end();
-    this.errorStream.end();
+    if (this.logStream !== process.stdout) {
+      this.logStream.end();
+    }
+    if (this.errorStream !== process.stderr) {
+      this.errorStream.end();
+    }
   }
 }
 
