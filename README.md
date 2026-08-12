@@ -199,7 +199,7 @@ Using the npm module,
 
 ## License
 
-MIT License
+ISC License
 
 ---
 
