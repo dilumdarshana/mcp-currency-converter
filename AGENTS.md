@@ -57,8 +57,7 @@ pnpm coverage               # with coverage
 - Logger is always mocked as `{ info: vi.fn(), error: vi.fn(), ... }`.
 
 ## Release
-- **semantic-release v25** runs on push to `master` / `next` via `.github/workflows/publish.yml`
-- **publish.yml is currently disabled** (`on: workflow_dispatch` only) while the serverless deploy is being validated. To re-enable npm publishing, restore the commented-out `push` trigger.
+- **semantic-release v25** runs on push to `master` / `next` via `.github/workflows/publish.yml` (auto-triggered on `src/**`, `package.json`, `pnpm-lock.yaml`, `.releaserc.json`, or the workflow itself)
 - **Breaking changes**: Use `BREAKING CHANGE:` footer or `!` after type (e.g., `chore!:`)
 - **CI order**: `pnpm install` → `pnpm build` → `pnpm test` → `semantic-release`
 - Tags published to npm via `NPM_TOKEN` secret, GitHub release via `GITHUB_TOKEN`
