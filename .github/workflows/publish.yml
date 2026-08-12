@@ -1,12 +1,20 @@
 # Workflow name
 name: Publish to npm with Semantic Release
 
-# Trigger the workflow on pushes to the specified branches
+# Trigger the workflow on pushes to the specified branches. Path filters keep
+# infrastructure-only changes (serverless.yml, deploy-aws.yml) from releasing a
+# new npm version.
 on:
   push:
     branches:
       - master # Main branch for stable releases
       - next   # Branch for pre-releases
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.releaserc.json'
+      - '.github/workflows/publish.yml'
 
 jobs:
   release:

@@ -15,14 +15,15 @@ pnpm inspector-http    # build + start http server on :3000 + launch MCP Inspect
 ```
 
 ## Architecture
-- **Entry**: `src/index.ts` → `src/server.ts` → `src/utils/registrations.ts`
+- **Entry**: `src/index.ts` → `src/server.ts` → `src/utils/registrations.ts`; serverless: `src/serverless.ts` (default-export of `createMcpHandler`)
 - **MCP SDK v2 `^2.0.0`**: Uses `@modelcontextprotocol/server` (`McpServer`, `createMcpHandler`) + `@modelcontextprotocol/node` (`toNodeHandler`) — NOT the deprecated `@modelcontextprotocol/sdk`
-- **Factory-based**: `serveStdio(factory)` / `createMcpHandler(factory)` build a fresh `McpServer` per request (stateless — no initialize handshake, no `Mcp-Session-Id`)
-- **2 transports**: `TRANSPORT=stdio` (default when unset), `http` (SSE transport removed in v2)
+- **Factory-based**: `serveStdio(factory)` / `createMcpHandler(factory)` build a fresh `McpServer` per request (stateless — no initialize handshake, no `Mcp-Session-Id`). The factory lives in `src/factory.ts` (`createFactory(logger)`) and is shared by stdio, HTTP, and Lambda entries.
+- **3 transports**: `TRANSPORT=stdio` (default when unset), `http`, and the Serverless Framework v4 Lambda entry (`src/serverless.ts`)
 - **1 tool**: `convert-currency` — `z.object({ fromCurrency, toCurrency, amount, date? })`
 - **1 resource**: `list-currencies`
 - **1 prompt**: `currency-conversion-prompt`
 - **API**: https://freecurrencyapi.com (requires key)
+- **AWS deploy**: native `mcp:` property in root `serverless.yml` (`mcp.servers.currency-converter.server: dist/serverless.js`). Framework owns REST endpoint/streaming/packaging/Lambda entry. Config lives at repo root, NOT in `serverless/` (packaging ships the service directory's tree + `node_modules`; `server:` path is relative to `serverless.yml`).
 
 ## Critical gotchas
 - **dotenv v17**: `dotenv.config()` writes to stdout, breaking MCP stdio JSON-RPC. **Always** use `dotenv.config({ quiet: true })` in `src/server.ts:11`.
@@ -37,6 +38,9 @@ pnpm inspector-http    # build + start http server on :3000 + launch MCP Inspect
 - **pnpm-workspace.yaml**: `allowBuilds` must keep `@modelcontextprotocol/inspector: true` (its postinstall builds the CLI).
 - **stdio is the default transport**: `TRANSPORT` unset → stdio. Do **not** set `TRANSPORT` in `.env` — dotenv would override the default and force HTTP.
 - **MCP Inspector filters env**: its `StdioClientTransport` spawns the server with only `HOME/LOGNAME/PATH/SHELL/TERM/USER` + env configured in the UI. Any required env (e.g. `FREE_CURRENCY_API_KEY`) must be added in the Inspector's server config "Environment" panel; shell env vars like `TRANSPORT=stdio` are NOT inherited.
+- **Serverless MCP entry contract**: `dist/serverless.js` (from `src/serverless.ts`) must default-export the object `createMcpHandler()` returns — a web-standard `fetch` handler. Anything else fails at cold start naming the `server:` property.
+- **Serverless packaging**: classic zip ships the service directory tree + production `node_modules` (dev deps pruned; SDK + zod must stay in `dependencies`). `server:` path is relative to `serverless.yml`, so the config lives at repo root. Run `pnpm build` before `serverless deploy`.
+- **Lambda package excludes `.env`** via `package.patterns` so the API key never ships in the artifact.
 
 ## Tests
 ```bash
