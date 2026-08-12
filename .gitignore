@@ -23,3 +23,7 @@ pnpm-debug.log*
 
 # Test
 coverage/
+
+# Serverless Framework
+.serverless/
+serverless-mcp/

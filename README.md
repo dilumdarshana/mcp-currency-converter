@@ -197,6 +197,46 @@ Using the npm module,
 }
 ```
 
+## Deploy to AWS (Serverless Framework)
+
+The server can be deployed as a managed MCP server on AWS Lambda using the Serverless Framework v4's native `mcp:` property. The Framework owns the REST endpoint, response streaming, packaging, and the Lambda entry that bridges its streaming runtime to the server's web-standard `fetch` handler.
+
+The Lambda entry is `src/serverless.ts`, esbuild-bundled into a self-contained `dist/serverless.mjs` by `pnpm build`, and declared in the root `serverless.yml`:
+
+```yml
+mcp:
+  servers:
+    currency-converter:
+      server: dist/serverless.mjs
+      timeout: 30
+      environment:
+        FREE_CURRENCY_API_KEY: ${env:FREE_CURRENCY_API_KEY}
+```
+
+Because the entry is bundled, `node_modules` is excluded from the Lambda package (`package.patterns: ['!node_modules/**']`), keeping the upload at ~1 MB.
+
+The endpoint is public (no authorizer) and served at `https://<api-id>.execute-api.<region>.amazonaws.com/<stage>/currency-converter/mcp`.
+
+### Prerequisites
+
+- A serverless.com account and an access key ([serverless.com](https://app.serverless.com))
+- An AWS IAM role that trusts GitHub Actions (OIDC) and can deploy CloudFormation stacks
+- GitHub repository secrets:
+  - `AWS_DEPLOY_ROLE_ARN` — ARN of the OIDC IAM role
+  - `SERVERLESS_ACCESS_KEY` — serverless.com access key
+  - `FREE_CURRENCY_API_KEY` — freecurrencyapi.com API key
+
+### Deploy from your machine
+
+```bash
+$ pnpm build
+$ SERVERLESS_ACCESS_KEY=xxx FREE_CURRENCY_API_KEY=xxx npx serverless@4 deploy
+```
+
+### Deploy from GitHub Actions
+
+Pushes to `master` that touch `serverless.yml`, `src/**`, or the dependency manifests trigger `.github/workflows/deploy-aws.yml`, which builds, tests, and deploys with `npx serverless@4 deploy`.
+
 ## License
 
 ISC License

@@ -1,10 +1,8 @@
-import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import dotenv from 'dotenv';
-import { PACKAGE_NAME, VERSION } from './utils/constants.js';
+import { createFactory } from './factory.js';
 import { createHttpTransport } from './transport/httpTransport.js';
 import { Logger } from './utils/logger.js';
-import { registerPrompts, registerResources, registerTools } from './utils/registrations.js';
 
 // Load environment variables from .env file to configure the application
 dotenv.config({ quiet: true });
@@ -25,28 +23,7 @@ export function createMcpServer() {
 
   // Factory builds a fresh server per connection, capturing shared state
   // (logger) in a closure.
-  const factory = () => {
-    const server = new McpServer(
-      {
-        name: PACKAGE_NAME,
-        version: VERSION,
-      },
-      {
-        capabilities: {
-          resources: {},
-          tools: {},
-          prompts: {},
-        },
-      },
-    );
-
-    // Register tools, resources, and prompts to the server
-    registerTools(server, logger);
-    registerResources(server, logger);
-    registerPrompts(server, logger);
-
-    return server;
-  };
+  const factory = createFactory(logger);
 
   // Configure the transport layer based on the TRANSPORT environment variable.
   // Defaults to stdio when TRANSPORT is unset — the inspector and most MCP
