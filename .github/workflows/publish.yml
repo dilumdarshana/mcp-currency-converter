@@ -1,22 +1,19 @@
 # Workflow name
 name: Publish to npm with Semantic Release
 
-# DISABLED for serverless CI/CD testing — automatic npm publishing is paused.
-# Trigger manually with "Run workflow" when ready to release again, then restore
-# the `push` trigger below.
 on:
   workflow_dispatch:
 
-  # push:
-  #   branches:
-  #     - master # Main branch for stable releases
-  #     - next   # Branch for pre-releases
-  #   paths:
-  #     - 'src/**'
-  #     - 'package.json'
-  #     - 'pnpm-lock.yaml'
-  #     - '.releaserc.json'
-  #     - '.github/workflows/publish.yml'
+  push:
+    branches:
+      - master # Main branch for stable releases
+      - next   # Branch for pre-releases
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.releaserc.json'
+      - '.github/workflows/publish.yml'
 
 jobs:
   release:
