@@ -4,7 +4,7 @@
 ```bash
 pnpm install
 cp .env_sample .env    # set FREE_CURRENCY_API_KEY
-pnpm build             # tsc + chmod dist/index.js
+pnpm build             # tsc + chmod dist/index.js + esbuild bundle dist/serverless.mjs
 pnpm test              # vitest v4
 pnpm coverage          # vitest --coverage
 pnpm mcp:stdio         # build + run stdio mode
@@ -23,7 +23,8 @@ pnpm inspector-http    # build + start http server on :3000 + launch MCP Inspect
 - **1 resource**: `list-currencies`
 - **1 prompt**: `currency-conversion-prompt`
 - **API**: https://freecurrencyapi.com (requires key)
-- **AWS deploy**: native `mcp:` property in root `serverless.yml` (`mcp.servers.currency-converter.server: dist/serverless.mjs`). Framework owns REST endpoint/streaming/packaging/Lambda entry. Config lives at repo root, NOT in `serverless/`. The Lambda entry is esbuild-bundled into one self-contained file and `node_modules` is excluded from the package.
+- **AWS deploy**: native `mcp:` property in root `serverless.yml` (`mcp.servers.currency-converter.server: dist/serverless.mjs`). Framework owns REST endpoint/streaming/packaging/Lambda entry. Config lives at repo root, NOT in `serverless/`. The Lambda entry is esbuild-bundled into one self-contained file and `node_modules` is excluded from the package. **Region is `us-west-2`** — `serverless.yml` defaults to it (`${env:AWS_REGION, 'us-west-2'}`) and `.github/workflows/deploy-aws.yml` pins `AWS_REGION: us-west-2` so CI and local deploys target the same stack. Endpoint: `https://<api-id>.execute-api.us-west-2.amazonaws.com/prod/currency-converter/mcp`.
+- **CI/CD deploy**: `.github/workflows/deploy-aws.yml` runs on pushes to `master` touching `serverless.yml`, `src/**`, `package.json`, `pnpm-lock.yaml`, or the workflow itself. It assumes an OIDC IAM role (`AWS_DEPLOY_ROLE_ARN` secret), builds, tests, then `npx serverless@4 deploy` with `SERVERLESS_ACCESS_KEY` + `FREE_CURRENCY_API_KEY` secrets. Requires the GitHub OIDC provider (`token.actions.githubusercontent.com`, client `sts.amazonaws.com`) and a role trusting `repo:<owner>/<repo>:ref:refs/heads/*`.
 
 ## Critical gotchas
 - **dotenv v17**: `dotenv.config()` writes to stdout, breaking MCP stdio JSON-RPC. **Always** use `dotenv.config({ quiet: true })` in `src/server.ts:11`.
@@ -41,6 +42,10 @@ pnpm inspector-http    # build + start http server on :3000 + launch MCP Inspect
 - **Serverless MCP entry contract**: `dist/serverless.mjs` (from `src/serverless.ts`, esbuild-bundled by the `build` script) must default-export the object `createMcpHandler()` returns — a web-standard `fetch` handler. Anything else fails at cold start naming the `server:` property.
 - **Serverless packaging**: the entry is bundled into one self-contained `dist/serverless.mjs`, so `node_modules/**` is excluded via `package.patterns` — the Lambda package is ~1 MB. Without the bundle, pnpm's `node_modules/.pnpm` store (dev + prod) ships whole and the upload balloons to ~370 MB. Run `pnpm build` (which runs esbuild) before `serverless deploy`.
 - **Lambda package excludes `.env`** via `package.patterns` so the API key never ships in the artifact.
+- **esbuild ESM bundle + dotenv**: dotenv v17 is CJS and does `require("fs")`, which throws `Dynamic require of "fs" is not supported` in pure ESM. The `build` script's esbuild command must include `--banner:js="import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);"` to shim `require`. Without it the Lambda cold start fails with `Runtime.Unknown`.
+- **Logger in Lambda**: `src/utils/logger.ts` writes to `~/.mcp/logs`; in Lambda `$HOME` doesn't exist and `mkdirSync` throws `ENOENT`. The constructor catches this and falls back to `process.stdout`/`process.stderr` (→ CloudWatch). Don't remove the try/catch.
+- **Logger stream types**: `logStream`/`errorStream` are typed `Writable` (from `node:stream`) because they can be either `fs.WriteStream` or `process.stdout` — TS 6.0 rejects the comparison otherwise.
+- **Deploy region drift**: if the workflow's `AWS_REGION` differs from the `serverless.yml` default, CI creates a **second stack in another region** instead of updating the existing one. Keep both pinned to `us-west-2`.
 
 ## Tests
 ```bash
@@ -53,6 +58,7 @@ pnpm coverage               # with coverage
 
 ## Release
 - **semantic-release v25** runs on push to `master` / `next` via `.github/workflows/publish.yml`
+- **publish.yml is currently disabled** (`on: workflow_dispatch` only) while the serverless deploy is being validated. To re-enable npm publishing, restore the commented-out `push` trigger.
 - **Breaking changes**: Use `BREAKING CHANGE:` footer or `!` after type (e.g., `chore!:`)
 - **CI order**: `pnpm install` → `pnpm build` → `pnpm test` → `semantic-release`
 - Tags published to npm via `NPM_TOKEN` secret, GitHub release via `GITHUB_TOKEN`
