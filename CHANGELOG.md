@@ -1,3 +1,44 @@
+# [3.2.0-next.1](https://github.com/dilumdarshana/mcp-currency-converter/compare/v3.1.0...v3.2.0-next.1) (2026-08-17)
+
+
+### Features
+
+* add get-exchange-rate, convert-batch, compare-rates tools ([#11](https://github.com/dilumdarshana/mcp-currency-converter/issues/11)) ([2034c4f](https://github.com/dilumdarshana/mcp-currency-converter/commit/2034c4fff28eb6371291462682489b9adaf71c96))
+
+# [3.1.0](https://github.com/dilumdarshana/mcp-currency-converter/compare/v3.0.0...v3.1.0) (2026-08-12)
+
+
+### Bug Fixes
+
+* **logger:** fall back to console output when home dir is not writable ([73f9b2b](https://github.com/dilumdarshana/mcp-currency-converter/commit/73f9b2b5ca874f90f159e9390265acd2eb2611e0))
+* **serverless:** shim require in esbuild ESM bundle for dotenv ([6435600](https://github.com/dilumdarshana/mcp-currency-converter/commit/64356000205104392a08eb5e5367bb52b2485b30))
+* shrink AWS Lambda package by esbuild-bundling the serverless entry ([fc91fe2](https://github.com/dilumdarshana/mcp-currency-converter/commit/fc91fe26fd8e798f9906f9423f195359fd69000a))
+
+
+### Features
+
+* deploy MCP server to AWS Lambda via Serverless Framework v4 native mcp: property ([962ab41](https://github.com/dilumdarshana/mcp-currency-converter/commit/962ab4178b3e451c512f62ee8469c11f9f10b15a))
+
+# [3.0.0](https://github.com/dilumdarshana/mcp-currency-converter/compare/v2.0.0...v3.0.0) (2026-08-12)
+
+
+* feat!: migrate to MCP SDK v2 (stateless protocol, ESM-only) ([e2ee92c](https://github.com/dilumdarshana/mcp-currency-converter/commit/e2ee92c65825694b616fa9259502835e90a76248))
+
+
+### BREAKING CHANGES
+
+* replace @modelcontextprotocol/sdk v1 with @modelcontextprotocol/server and @modelcontextprotocol/node v2. New stateless 2026-07-28 protocol: no initialize handshake, no Mcp-Session-Id, SSE transport removed. ESM-only (type: module). stdio is now the default transport.
+
+# [3.0.0-next.1](https://github.com/dilumdarshana/mcp-currency-converter/compare/v2.0.0...v3.0.0-next.1) (2026-08-12)
+
+
+* feat!: migrate to MCP SDK v2 (stateless protocol, ESM-only) ([e2ee92c](https://github.com/dilumdarshana/mcp-currency-converter/commit/e2ee92c65825694b616fa9259502835e90a76248))
+
+
+### BREAKING CHANGES
+
+* replace @modelcontextprotocol/sdk v1 with @modelcontextprotocol/server and @modelcontextprotocol/node v2. New stateless 2026-07-28 protocol: no initialize handshake, no Mcp-Session-Id, SSE transport removed. ESM-only (type: module). stdio is now the default transport.
+
 # [2.0.0](https://github.com/dilumdarshana/mcp-currency-converter/compare/v1.1.0...v2.0.0) (2026-06-17)
 
 
