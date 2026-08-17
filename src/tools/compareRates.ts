@@ -30,12 +30,14 @@ export async function compareRates(
   logger: Logger,
 ): Promise<CallToolResult> {
   try {
+    const from = fromCurrency.toUpperCase();
+    const to = toCurrency.toUpperCase();
     const rates: Array<{ date: string; rate: string }> = [];
 
     for (const date of dates) {
       const { formattedDate, readableDate } = parseDate(date);
-      const dateRates = await fetchRates(fromCurrency, [toCurrency], formattedDate);
-      const rate = dateRates[toCurrency];
+      const dateRates = await fetchRates(from, [to], formattedDate);
+      const rate = dateRates[to];
 
       if (!rate) {
         throw new Error(`Invalid exchange rate for ${date}`);
@@ -45,7 +47,7 @@ export async function compareRates(
     }
 
     return formatResponse({
-      message: `Exchange rates from ${fromCurrency} to ${toCurrency} across ${rates.length} dates`,
+      message: `Exchange rates from ${from} to ${to} across ${rates.length} dates`,
       rates,
     });
   } catch (error) {

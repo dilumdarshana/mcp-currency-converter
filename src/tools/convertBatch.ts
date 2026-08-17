@@ -31,10 +31,12 @@ export async function convertBatch(
   logger: Logger,
 ): Promise<CallToolResult> {
   try {
+    const from = fromCurrency.toUpperCase();
+    const targets = toCurrencies.map((c) => c.toUpperCase());
     const { formattedDate, readableDate } = parseDate(date);
-    const rates = await fetchRates(fromCurrency, toCurrencies, formattedDate);
+    const rates = await fetchRates(from, targets, formattedDate);
 
-    const conversions = toCurrencies.map((toCurrency) => {
+    const conversions = targets.map((toCurrency) => {
       const rate = rates[toCurrency];
       if (!rate) {
         throw new Error(`Invalid exchange rate for ${toCurrency}`);
@@ -47,7 +49,7 @@ export async function convertBatch(
     });
 
     return formatResponse({
-      message: `Converted ${amount} ${fromCurrency} to ${conversions.length} currencies on ${readableDate || 'latest'}`,
+      message: `Converted ${amount} ${from} to ${conversions.length} currencies on ${readableDate || 'latest'}`,
       conversions,
     });
   } catch (error) {

@@ -62,6 +62,24 @@ describe('getExchangeRate', () => {
     expect(text).toContain('0.85');
   });
 
+  it('should normalize lowercase currency codes to uppercase', async () => {
+    (global.fetch as any).mockResolvedValueOnce({
+      json: async () => ({ data: { EUR: 0.85 } }),
+    });
+
+    const result = await getExchangeRate(
+      { fromCurrency: 'usd', toCurrency: 'eur', date: '' },
+      mockLogger
+    );
+
+    const text = (result.content[0] as { type: 'text'; text: string }).text;
+    expect(text).toContain('Exchange rate from USD to EUR on latest');
+    expect(text).toContain('0.85');
+    const url = (global.fetch as any).mock.calls[0][0];
+    expect(url).toContain('base_currency=USD');
+    expect(url).toContain('currencies=EUR');
+  });
+
   it('should handle an invalid exchange rate', async () => {
     (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ data: {} }),

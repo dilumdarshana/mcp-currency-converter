@@ -27,18 +27,20 @@ export async function getExchangeRate(
   logger: Logger,
 ): Promise<CallToolResult> {
   try {
+    const from = fromCurrency.toUpperCase();
+    const to = toCurrency.toUpperCase();
     const { formattedDate, readableDate } = parseDate(date);
-    const rates = await fetchRates(fromCurrency, [toCurrency], formattedDate);
-    const rate = rates[toCurrency];
+    const rates = await fetchRates(from, [to], formattedDate);
+    const rate = rates[to];
 
     if (!rate) {
       throw new Error('Invalid exchange rate');
     }
 
     return formatResponse({
-      message: `Exchange rate from ${fromCurrency} to ${toCurrency} on ${readableDate || 'latest'}: ${formatRate(rate)}`,
-      fromCurrency,
-      toCurrency,
+      message: `Exchange rate from ${from} to ${to} on ${readableDate || 'latest'}: ${formatRate(rate)}`,
+      fromCurrency: from,
+      toCurrency: to,
       rate: formatRate(rate),
       date: readableDate || 'latest',
     });

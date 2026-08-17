@@ -36,14 +36,16 @@ export async function convertCurrency(
   logger: Logger,
 ): Promise<CallToolResult> {
   try {
+    const from = fromCurrency.toUpperCase();
+    const to = toCurrency.toUpperCase();
     const { formattedDate, readableDate } = parseDate(date);
 
     // Log the conversion request for debugging purposes
-    logger.info(`Converting ${amount} ${fromCurrency} to ${toCurrency}...`);
+    logger.info(`Converting ${amount} ${from} to ${to}...`);
 
     // Fetch the exchange rate for the specified currencies (cached by the API client)
-    const rates = await fetchRates(fromCurrency, [toCurrency], formattedDate);
-    const exchangeRate = rates[toCurrency];
+    const rates = await fetchRates(from, [to], formattedDate);
+    const exchangeRate = rates[to];
 
     // Throw an error if the exchange rate is invalid or missing
     if (!exchangeRate) {
@@ -55,7 +57,7 @@ export async function convertCurrency(
 
     // Use the formatResponse utility to standardize the response format
     return formatResponse({
-      message: `Converted ${amount} ${fromCurrency} to ${toCurrency} on ${readableDate || 'latest'}: ${convertedAmount} ${toCurrency}`,
+      message: `Converted ${amount} ${from} to ${to} on ${readableDate || 'latest'}: ${convertedAmount} ${to}`,
     });
   } catch (error) {
     // Log the error for debugging purposes

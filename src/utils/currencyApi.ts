@@ -35,7 +35,9 @@ export async function fetchRates(
   currencies: string[],
   date?: string,
 ): Promise<Record<string, number>> {
-  const cacheKey = `${baseCurrency}:${[...currencies].sort().join(',')}:${date ?? 'latest'}`;
+  const normalizedBase = baseCurrency.toUpperCase();
+  const normalizedCurrencies = currencies.map((c) => c.toUpperCase());
+  const cacheKey = `${normalizedBase}:${[...normalizedCurrencies].sort().join(',')}:${date ?? 'latest'}`;
   const now = Date.now();
   const cached = cache.get(cacheKey);
   if (cached && cached.expiresAt > now) {
@@ -43,17 +45,17 @@ export async function fetchRates(
   }
 
   const apiKey = getApiKey();
-  const currencyParam = currencies.join(',');
+  const currencyParam = normalizedCurrencies.join(',');
   const endpoint = date
-    ? `${CURRENCY_ENDPOINT_BASE}/historical?apikey=${apiKey}&base_currency=${baseCurrency}&currencies=${currencyParam}&date=${date}`
-    : `${CURRENCY_ENDPOINT_BASE}/latest?apikey=${apiKey}&base_currency=${baseCurrency}&currencies=${currencyParam}`;
+    ? `${CURRENCY_ENDPOINT_BASE}/historical?apikey=${apiKey}&base_currency=${normalizedBase}&currencies=${currencyParam}&date=${date}`
+    : `${CURRENCY_ENDPOINT_BASE}/latest?apikey=${apiKey}&base_currency=${normalizedBase}&currencies=${currencyParam}`;
 
   const response = await fetch(endpoint);
   const data = (await response.json()) as CurrencyApiResponse;
 
   const rates = date
-    ? ((data.data[date] as Record<string, number>) ?? {})
-    : (data.data as Record<string, number>);
+    ? ((data.data?.[date] as Record<string, number>) ?? {})
+    : ((data.data as Record<string, number>) ?? {});
 
   cache.set(cacheKey, { rates, expiresAt: now + CACHE_TTL_MS });
   return rates;
