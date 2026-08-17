@@ -19,7 +19,7 @@ pnpm inspector-http    # build + start http server on :3000 + launch MCP Inspect
 - **MCP SDK v2 `^2.0.0`**: Uses `@modelcontextprotocol/server` (`McpServer`, `createMcpHandler`) + `@modelcontextprotocol/node` (`toNodeHandler`) — NOT the deprecated `@modelcontextprotocol/sdk`
 - **Factory-based**: `serveStdio(factory)` / `createMcpHandler(factory)` build a fresh `McpServer` per request (stateless — no initialize handshake, no `Mcp-Session-Id`). The factory lives in `src/factory.ts` (`createFactory(logger)`) and is shared by stdio, HTTP, and Lambda entries.
 - **3 transports**: `TRANSPORT=stdio` (default when unset), `http`, and the Serverless Framework v4 Lambda entry (`src/serverless.ts`)
-- **4 tools**: `convert-currency` (`z.object({ fromCurrency, toCurrency, amount, date? })`), `get-exchange-rate` (`{ fromCurrency, toCurrency, date? }`), `convert-batch` (`{ fromCurrency, amount, toCurrencies[], date? }`), `compare-rates` (`{ fromCurrency, toCurrency, dates[] }`)
+- **4 tools**: `convert-currency` (`z.object({ fromCurrency, toCurrency, amount, date? })`), `get-exchange-rate` (`{ fromCurrency, toCurrency, date? }`), `convert-batch` (`{ fromCurrency, amount, toCurrencies, date? }` — `toCurrencies` is a comma-separated string like `"EUR, GBP"`), `compare-rates` (`{ fromCurrency, toCurrency, dates }` — `dates` is a comma-separated string like `"10-08-2025, 11-08-2025"`)
 - **1 resource**: `list-currencies`
 - **1 prompt**: `currency-conversion-prompt`
 - **API**: https://freecurrencyapi.com (requires key)

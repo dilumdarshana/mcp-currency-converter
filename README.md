@@ -33,6 +33,40 @@ pnpm add @alcorme/mcp-currency-converter
 - Convert 100 USD to EUR, GBP, and JPY
 - Compare USD to EUR rates for 10 Aug, 11 Aug, and 12 Aug 2025
 
+## Tool usage
+
+Each tool takes a JSON object. `date` is optional — when omitted, empty, or whitespace, the latest rate is used. Currency codes are case-insensitive (normalized to uppercase).
+
+### convert-currency
+
+```json
+{ "fromCurrency": "USD", "toCurrency": "EUR", "amount": 100 }
+{ "fromCurrency": "USD", "toCurrency": "EUR", "amount": 100, "date": "12-08-2025" }
+```
+
+### get-exchange-rate
+
+```json
+{ "fromCurrency": "USD", "toCurrency": "EUR" }
+{ "fromCurrency": "USD", "toCurrency": "EUR", "date": "12-08-2025" }
+```
+
+### convert-batch
+
+`toCurrencies` is a comma-separated string:
+
+```json
+{ "fromCurrency": "USD", "amount": 100, "toCurrencies": "EUR, GBP, JPY" }
+```
+
+### compare-rates
+
+`dates` is a comma-separated string:
+
+```json
+{ "fromCurrency": "USD", "toCurrency": "EUR", "dates": "10-08-2025, 11-08-2025, 12-08-2025" }
+```
+
 
 ## Prerequisites
 - Node.js >=24
