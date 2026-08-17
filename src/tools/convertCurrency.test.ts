@@ -57,13 +57,13 @@ describe('convertCurrency', () => {
     expect(mockLogger.info).toHaveBeenCalledWith('Converting 100 USD to EUR...');
   });
 
-  it('should default to latest rates when the date is null', async () => {
+  it('should default to latest rates when the date is empty', async () => {
     (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ data: { EUR: 0.85 } }),
     });
 
     const result = await convertCurrency(
-      { fromCurrency: 'USD', toCurrency: 'EUR', amount: 100, date: null },
+      { fromCurrency: 'USD', toCurrency: 'EUR', amount: 100, date: '' },
       mockLogger
     );
 

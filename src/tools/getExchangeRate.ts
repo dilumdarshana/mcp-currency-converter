@@ -9,7 +9,7 @@ import { formatRate } from '../utils/format.js';
 export const getExchangeRateSchema = z.object({
   fromCurrency: z.string().describe('The base currency (e.g., USD)'),
   toCurrency: z.string().describe('The quote currency (e.g., EUR)'),
-  date: z.string().optional().nullable().describe('The historical date for the rate in DD-MM-YYYY format'),
+  date: z.string().optional().describe('The historical date for the rate in DD-MM-YYYY format'),
 });
 
 export type GetExchangeRateInput = z.infer<typeof getExchangeRateSchema>;
