@@ -1,6 +1,9 @@
 import { McpServer } from '@modelcontextprotocol/server';
 import { Logger } from './logger.js';
 import { convertCurrency, convertCurrencySchema } from '../tools/convertCurrency.js';
+import { getExchangeRate, getExchangeRateSchema } from '../tools/getExchangeRate.js';
+import { convertBatch, convertBatchSchema } from '../tools/convertBatch.js';
+import { compareRates, compareRatesSchema } from '../tools/compareRates.js';
 import { listCurrencies } from '../resources/listCurrencies.js';
 import { currencyPromptSchema, handleCurrencyPrompt } from '../prompts/currencyPrompt.js';
 
@@ -25,6 +28,57 @@ export function registerTools(server: McpServer, logger: Logger) {
       },
     },
     (input) => convertCurrency(input, logger),
+  );
+
+  server.registerTool(
+    'get-exchange-rate',
+    {
+      title: 'get-exchange-rate',
+      description: 'Returns the exchange rate between two currencies',
+      inputSchema: getExchangeRateSchema,
+      annotations: {
+        title: 'get-exchange-rate',
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
+    (input) => getExchangeRate(input, logger),
+  );
+
+  server.registerTool(
+    'convert-batch',
+    {
+      title: 'convert-batch',
+      description: 'Converts an amount from one currency to multiple currencies in a single call',
+      inputSchema: convertBatchSchema,
+      annotations: {
+        title: 'convert-batch',
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
+    (input) => convertBatch(input, logger),
+  );
+
+  server.registerTool(
+    'compare-rates',
+    {
+      title: 'compare-rates',
+      description: 'Compares the exchange rate between two currencies across multiple dates',
+      inputSchema: compareRatesSchema,
+      annotations: {
+        title: 'compare-rates',
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
+    (input) => compareRates(input, logger),
   );
 }
 
@@ -56,7 +110,7 @@ export function registerPrompts(server: McpServer, logger: Logger) {
     'currency-conversion-prompt',
     {
       description: 'Prompt for currency conversion details',
-      argsSchema: currencyPromptSchema.shape,
+      argsSchema: currencyPromptSchema,
     },
     (input) => handleCurrencyPrompt(input, logger),
   );

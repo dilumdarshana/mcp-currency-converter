@@ -9,20 +9,63 @@ pnpm add @alcorme/mcp-currency-converter
 ## Features
 
 - **MCP-compliant server** using `@modelcontextprotocol/server` v2 (stateless, no session handshake)
-- **Transport Support**: Stdio and Streamable HTTP (stateless)
+- **Transport Support**: Stdio, Streamable HTTP, and managed AWS Lambda (Serverless Framework v4)
+- **4 Tools**:
+  - `convert-currency` — convert an amount between two currencies
+  - `get-exchange-rate` — fetch the raw exchange rate for a currency pair
+  - `convert-batch` — convert an amount to multiple currencies in one call
+  - `compare-rates` — compare a currency pair across multiple dates
 - **Currency Conversion**: Real-time exchange rates or historical exchange rates
+- **Rate Caching**: Exchange rates cached in-memory (5-minute TTL) to reduce API calls
+- **Locale-aware Formatting**: `Intl.NumberFormat` for amounts and rates
 - **Resource Management**: List supported currencies via resources
 - **Prompt Capability**: Interactive prompts for dynamic input
 - **Unit Testing**: Vitest powered unit testing
 - **Type Safety**: Built with TypeScript
 - **Package Management**: Uses `pnpm` for efficient dependency management
-- **Authentication for http transport**: TBD
 
 ---
 
 ## Example queries
 - Convert 1 USD to EUR
 - Convert 1 USD to EUR on 12 August 2025
+- What is the exchange rate for USD to EUR?
+- Convert 100 USD to EUR, GBP, and JPY
+- Compare USD to EUR rates for 10 Aug, 11 Aug, and 12 Aug 2025
+
+## Tool usage
+
+Each tool takes a JSON object. `date` is optional — when omitted, empty, or whitespace, the latest rate is used. Currency codes are case-insensitive (normalized to uppercase).
+
+### convert-currency
+
+```json
+{ "fromCurrency": "USD", "toCurrency": "EUR", "amount": 100 }
+{ "fromCurrency": "USD", "toCurrency": "EUR", "amount": 100, "date": "12-08-2025" }
+```
+
+### get-exchange-rate
+
+```json
+{ "fromCurrency": "USD", "toCurrency": "EUR" }
+{ "fromCurrency": "USD", "toCurrency": "EUR", "date": "12-08-2025" }
+```
+
+### convert-batch
+
+`toCurrencies` is a comma-separated string:
+
+```json
+{ "fromCurrency": "USD", "amount": 100, "toCurrencies": "EUR, GBP, JPY" }
+```
+
+### compare-rates
+
+`dates` is a comma-separated string:
+
+```json
+{ "fromCurrency": "USD", "toCurrency": "EUR", "dates": "10-08-2025, 11-08-2025, 12-08-2025" }
+```
 
 
 ## Prerequisites
