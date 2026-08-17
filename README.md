@@ -9,20 +9,29 @@ pnpm add @alcorme/mcp-currency-converter
 ## Features
 
 - **MCP-compliant server** using `@modelcontextprotocol/server` v2 (stateless, no session handshake)
-- **Transport Support**: Stdio and Streamable HTTP (stateless)
+- **Transport Support**: Stdio, Streamable HTTP, and managed AWS Lambda (Serverless Framework v4)
+- **4 Tools**:
+  - `convert-currency` — convert an amount between two currencies
+  - `get-exchange-rate` — fetch the raw exchange rate for a currency pair
+  - `convert-batch` — convert an amount to multiple currencies in one call
+  - `compare-rates` — compare a currency pair across multiple dates
 - **Currency Conversion**: Real-time exchange rates or historical exchange rates
+- **Rate Caching**: Exchange rates cached in-memory (5-minute TTL) to reduce API calls
+- **Locale-aware Formatting**: `Intl.NumberFormat` for amounts and rates
 - **Resource Management**: List supported currencies via resources
 - **Prompt Capability**: Interactive prompts for dynamic input
 - **Unit Testing**: Vitest powered unit testing
 - **Type Safety**: Built with TypeScript
 - **Package Management**: Uses `pnpm` for efficient dependency management
-- **Authentication for http transport**: TBD
 
 ---
 
 ## Example queries
 - Convert 1 USD to EUR
 - Convert 1 USD to EUR on 12 August 2025
+- What is the exchange rate for USD to EUR?
+- Convert 100 USD to EUR, GBP, and JPY
+- Compare USD to EUR rates for 10 Aug, 11 Aug, and 12 Aug 2025
 
 
 ## Prerequisites

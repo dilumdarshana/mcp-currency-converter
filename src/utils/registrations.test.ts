@@ -3,6 +3,9 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { Logger } from './logger.js';
 import { registerTools, registerResources, registerPrompts } from './registrations.js';
 import { convertCurrencySchema } from '../tools/convertCurrency.js';
+import { getExchangeRateSchema } from '../tools/getExchangeRate.js';
+import { convertBatchSchema } from '../tools/convertBatch.js';
+import { compareRatesSchema } from '../tools/compareRates.js';
 import { currencyPromptSchema } from '../prompts/currencyPrompt.js';
 
 describe('MCP Server Registrations', () => {
@@ -34,6 +37,57 @@ describe('MCP Server Registrations', () => {
           readOnlyHint: false,
           destructiveHint: false,
           idempotentHint: false,
+          openWorldHint: true,
+        },
+      },
+      expect.any(Function)
+    );
+
+    expect(mockServer.registerTool).toHaveBeenCalledWith(
+      'get-exchange-rate',
+      {
+        title: 'get-exchange-rate',
+        description: 'Returns the exchange rate between two currencies',
+        inputSchema: getExchangeRateSchema,
+        annotations: {
+          title: 'get-exchange-rate',
+          readOnlyHint: true,
+          destructiveHint: false,
+          idempotentHint: true,
+          openWorldHint: true,
+        },
+      },
+      expect.any(Function)
+    );
+
+    expect(mockServer.registerTool).toHaveBeenCalledWith(
+      'convert-batch',
+      {
+        title: 'convert-batch',
+        description: 'Converts an amount from one currency to multiple currencies in a single call',
+        inputSchema: convertBatchSchema,
+        annotations: {
+          title: 'convert-batch',
+          readOnlyHint: false,
+          destructiveHint: false,
+          idempotentHint: false,
+          openWorldHint: true,
+        },
+      },
+      expect.any(Function)
+    );
+
+    expect(mockServer.registerTool).toHaveBeenCalledWith(
+      'compare-rates',
+      {
+        title: 'compare-rates',
+        description: 'Compares the exchange rate between two currencies across multiple dates',
+        inputSchema: compareRatesSchema,
+        annotations: {
+          title: 'compare-rates',
+          readOnlyHint: true,
+          destructiveHint: false,
+          idempotentHint: true,
           openWorldHint: true,
         },
       },

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { convertCurrency } from './convertCurrency.js';
+import { clearCache } from '../utils/currencyApi.js';
 import { Logger } from '../utils/logger.js';
 
 const mockLogger: Logger = {
@@ -17,6 +18,9 @@ describe('convertCurrency', () => {
 
     // Mock the fetch function
     global.fetch = vi.fn();
+
+    // Clear the shared rate cache between tests
+    clearCache();
   });
 
   it('should convert currency successfully without date', async () => {
@@ -56,9 +60,12 @@ describe('convertCurrency', () => {
   it('should handle missing API key', async () => {
     delete process.env.FREE_CURRENCY_API_KEY;
 
-    await expect(
-      convertCurrency({ fromCurrency: 'USD', toCurrency: 'EUR', amount: 100 }, mockLogger)
-    ).rejects.toThrow('Missing FREE_CURRENCY_KEY');
+    const result = await convertCurrency(
+      { fromCurrency: 'USD', toCurrency: 'EUR', amount: 100 },
+      mockLogger
+    );
+
+    expect((result.content[0] as { type: 'text'; text: string }).text).toContain('Error: Missing FREE_CURRENCY_KEY');
   });
 
   it('should handle invalid exchange rate', async () => {

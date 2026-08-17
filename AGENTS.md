@@ -19,7 +19,7 @@ pnpm inspector-http    # build + start http server on :3000 + launch MCP Inspect
 - **MCP SDK v2 `^2.0.0`**: Uses `@modelcontextprotocol/server` (`McpServer`, `createMcpHandler`) + `@modelcontextprotocol/node` (`toNodeHandler`) — NOT the deprecated `@modelcontextprotocol/sdk`
 - **Factory-based**: `serveStdio(factory)` / `createMcpHandler(factory)` build a fresh `McpServer` per request (stateless — no initialize handshake, no `Mcp-Session-Id`). The factory lives in `src/factory.ts` (`createFactory(logger)`) and is shared by stdio, HTTP, and Lambda entries.
 - **3 transports**: `TRANSPORT=stdio` (default when unset), `http`, and the Serverless Framework v4 Lambda entry (`src/serverless.ts`)
-- **1 tool**: `convert-currency` — `z.object({ fromCurrency, toCurrency, amount, date? })`
+- **4 tools**: `convert-currency` (`z.object({ fromCurrency, toCurrency, amount, date? })`), `get-exchange-rate` (`{ fromCurrency, toCurrency, date? }`), `convert-batch` (`{ fromCurrency, amount, toCurrencies[], date? }`), `compare-rates` (`{ fromCurrency, toCurrency, dates[] }`)
 - **1 resource**: `list-currencies`
 - **1 prompt**: `currency-conversion-prompt`
 - **API**: https://freecurrencyapi.com (requires key)
@@ -46,6 +46,7 @@ pnpm inspector-http    # build + start http server on :3000 + launch MCP Inspect
 - **Logger in Lambda**: `src/utils/logger.ts` writes to `~/.mcp/logs`; in Lambda `$HOME` doesn't exist and `mkdirSync` throws `ENOENT`. The constructor catches this and falls back to `process.stdout`/`process.stderr` (→ CloudWatch). Don't remove the try/catch.
 - **Logger stream types**: `logStream`/`errorStream` are typed `Writable` (from `node:stream`) because they can be either `fs.WriteStream` or `process.stdout` — TS 6.0 rejects the comparison otherwise.
 - **Deploy region drift**: if the workflow's `AWS_REGION` differs from the `serverless.yml` default, CI creates a **second stack in another region** instead of updating the existing one. Keep both pinned to `us-west-2`.
+- **Rate caching**: `src/utils/currencyApi.ts` caches exchange rates in a module-level `Map` for 5 minutes (key = base:currencies:date). Tests must call `clearCache()` in `beforeEach` or a cached response leaks across tests. `parseDate` (DD-MM-YYYY etc.) lives in `src/utils/date.ts`; locale formatting (`formatAmount`/`formatRate`) in `src/utils/format.ts`.
 
 ## Tests
 ```bash
