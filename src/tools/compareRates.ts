@@ -10,9 +10,9 @@ export const compareRatesSchema = z.object({
   fromCurrency: z.string().describe('The base currency (e.g., USD)'),
   toCurrency: z.string().describe('The quote currency (e.g., EUR)'),
   dates: z
-    .array(z.string())
+    .string()
     .min(1)
-    .describe('The dates to compare in DD-MM-YYYY format'),
+    .describe('Comma-separated dates to compare in DD-MM-YYYY format (e.g., "12-08-2025, 13-08-2025")'),
 });
 
 export type CompareRatesInput = z.infer<typeof compareRatesSchema>;
@@ -32,9 +32,13 @@ export async function compareRates(
   try {
     const from = fromCurrency.toUpperCase();
     const to = toCurrency.toUpperCase();
+    const dateList = dates
+      .split(',')
+      .map((d) => d.trim())
+      .filter((d) => d.length > 0);
     const rates: Array<{ date: string; rate: string }> = [];
 
-    for (const date of dates) {
+    for (const date of dateList) {
       const { formattedDate, readableDate } = parseDate(date);
       const dateRates = await fetchRates(from, [to], formattedDate);
       const rate = dateRates[to];

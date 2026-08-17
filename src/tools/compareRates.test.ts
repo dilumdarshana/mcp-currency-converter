@@ -28,7 +28,7 @@ describe('compareRates', () => {
       });
 
     const result = await compareRates(
-      { fromCurrency: 'USD', toCurrency: 'EUR', dates: ['12-08-2025', '13-08-2025'] },
+      { fromCurrency: 'USD', toCurrency: 'EUR', dates: '12-08-2025, 13-08-2025' },
       mockLogger
     );
 
@@ -44,7 +44,7 @@ describe('compareRates', () => {
     });
 
     const result = await compareRates(
-      { fromCurrency: 'USD', toCurrency: 'EUR', dates: ['12-08-2025'] },
+      { fromCurrency: 'USD', toCurrency: 'EUR', dates: '12-08-2025' },
       mockLogger
     );
 
