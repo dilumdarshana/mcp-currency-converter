@@ -11,9 +11,9 @@ export const convertBatchSchema = z.object({
   fromCurrency: z.string().describe('The currency to convert from (e.g., USD)'),
   amount: z.number().positive().describe('The amount to convert'),
   toCurrencies: z
-    .array(z.enum(SUPPORTED_CURRENCIES))
+    .string()
     .min(1)
-    .describe('The currencies to convert to (e.g., ["EUR", "GBP"])'),
+    .describe('Comma-separated currencies to convert to (e.g., "EUR, GBP")'),
   date: z.string().optional().describe('The historical date for conversion in DD-MM-YYYY format'),
 });
 
@@ -33,7 +33,18 @@ export async function convertBatch(
 ): Promise<CallToolResult> {
   try {
     const from = fromCurrency.toUpperCase();
-    const targets = toCurrencies.map((c) => c.toUpperCase());
+    const targets = toCurrencies
+      .split(',')
+      .map((c) => c.trim().toUpperCase())
+      .filter((c) => c.length > 0);
+
+    const invalid = targets.filter(
+      (c) => !(SUPPORTED_CURRENCIES as readonly string[]).includes(c),
+    );
+    if (invalid.length > 0) {
+      throw new Error(`Unsupported currency code(s): ${invalid.join(', ')}`);
+    }
+
     const { formattedDate, readableDate } = parseDate(date);
     const rates = await fetchRates(from, targets, formattedDate);
 

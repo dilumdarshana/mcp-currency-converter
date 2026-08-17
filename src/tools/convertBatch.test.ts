@@ -24,7 +24,7 @@ describe('convertBatch', () => {
     });
 
     const result = await convertBatch(
-      { fromCurrency: 'USD', amount: 100, toCurrencies: ['EUR', 'GBP'] },
+      { fromCurrency: 'USD', amount: 100, toCurrencies: 'EUR, GBP' },
       mockLogger
     );
 
@@ -40,11 +40,25 @@ describe('convertBatch', () => {
     });
 
     const result = await convertBatch(
-      { fromCurrency: 'USD', amount: 100, toCurrencies: ['EUR', 'GBP'] },
+      { fromCurrency: 'USD', amount: 100, toCurrencies: 'EUR, GBP' },
       mockLogger
     );
 
     expect((result.content[0] as { type: 'text'; text: string }).text).toContain('Error: Invalid exchange rate for GBP');
+    expect(mockLogger.error).toHaveBeenCalled();
+  });
+
+  it('should normalize lowercase codes and reject unsupported ones', async () => {
+    (global.fetch as any).mockResolvedValueOnce({
+      json: async () => ({ data: { EUR: 0.85 } }),
+    });
+
+    const result = await convertBatch(
+      { fromCurrency: 'usd', amount: 100, toCurrencies: 'eur, XXX' },
+      mockLogger
+    );
+
+    expect((result.content[0] as { type: 'text'; text: string }).text).toContain('Error: Unsupported currency code(s): XXX');
     expect(mockLogger.error).toHaveBeenCalled();
   });
 });
