@@ -47,6 +47,21 @@ describe('getExchangeRate', () => {
     expect(text).toContain('on 12 August 2025');
   });
 
+  it('should default to latest rates when the date is empty or whitespace', async () => {
+    (global.fetch as any).mockResolvedValueOnce({
+      json: async () => ({ data: { EUR: 0.85 } }),
+    });
+
+    const result = await getExchangeRate(
+      { fromCurrency: 'USD', toCurrency: 'EUR', date: '   ' },
+      mockLogger
+    );
+
+    const text = (result.content[0] as { type: 'text'; text: string }).text;
+    expect(text).toContain('on latest');
+    expect(text).toContain('0.85');
+  });
+
   it('should handle an invalid exchange rate', async () => {
     (global.fetch as any).mockResolvedValueOnce({
       json: async () => ({ data: {} }),

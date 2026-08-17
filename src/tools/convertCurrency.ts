@@ -15,7 +15,7 @@ export const convertCurrencySchema = z.object({
   fromCurrency: z.string().describe('The currency to convert from (e.g., USD, EUR)'), // Source currency
   toCurrency: z.string().describe('The currency to convert to (e.g., USD, EUR)'),   // Target currency
   amount: z.number().positive().describe('The amount to convert'),                 // Amount to be converted
-  date: z.string().optional().describe('The historical date for conversion in DD-MM-YYYY format')
+  date: z.string().optional().nullable().describe('The historical date for conversion in DD-MM-YYYY format')
 });
 
 // Define the TypeScript type for the input based on the schema

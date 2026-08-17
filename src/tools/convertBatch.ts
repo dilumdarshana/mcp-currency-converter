@@ -13,7 +13,7 @@ export const convertBatchSchema = z.object({
     .array(z.string())
     .min(1)
     .describe('The currencies to convert to (e.g., ["EUR", "GBP"])'),
-  date: z.string().optional().describe('The historical date for conversion in DD-MM-YYYY format'),
+  date: z.string().optional().nullable().describe('The historical date for conversion in DD-MM-YYYY format'),
 });
 
 export type ConvertBatchInput = z.infer<typeof convertBatchSchema>;
