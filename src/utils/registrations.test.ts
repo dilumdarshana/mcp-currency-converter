@@ -117,7 +117,7 @@ describe('MCP Server Registrations', () => {
       'currency-conversion-prompt',
       {
         description: 'Prompt for currency conversion details',
-        argsSchema: currencyPromptSchema.shape,
+        argsSchema: currencyPromptSchema,
       },
       expect.any(Function)
     );

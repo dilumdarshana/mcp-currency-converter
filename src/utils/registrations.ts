@@ -110,7 +110,7 @@ export function registerPrompts(server: McpServer, logger: Logger) {
     'currency-conversion-prompt',
     {
       description: 'Prompt for currency conversion details',
-      argsSchema: currencyPromptSchema.shape,
+      argsSchema: currencyPromptSchema,
     },
     (input) => handleCurrencyPrompt(input, logger),
   );
