@@ -5,12 +5,13 @@ import { formatResponse } from '../utils/mcpResponse.js';
 import { fetchRates } from '../utils/currencyApi.js';
 import { parseDate } from '../utils/date.js';
 import { formatAmount, formatRate } from '../utils/format.js';
+import { SUPPORTED_CURRENCIES } from '../utils/constants.js';
 
 export const convertBatchSchema = z.object({
   fromCurrency: z.string().describe('The currency to convert from (e.g., USD)'),
   amount: z.number().positive().describe('The amount to convert'),
   toCurrencies: z
-    .array(z.string())
+    .array(z.enum(SUPPORTED_CURRENCIES))
     .min(1)
     .describe('The currencies to convert to (e.g., ["EUR", "GBP"])'),
   date: z.string().optional().describe('The historical date for conversion in DD-MM-YYYY format'),
