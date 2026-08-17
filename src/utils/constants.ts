@@ -14,3 +14,11 @@ export const PACKAGE_NAME = '@alcorme/mcp-currency-converter';
 
 // Base path of the currency conversion API
 export const CURRENCY_ENDPOINT_BASE = 'https://api.freecurrencyapi.com/v1';
+
+// Currencies supported by the Free Currency API (ISO 4217 codes)
+export const SUPPORTED_CURRENCIES = [
+  'AUD', 'BGN', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'EUR', 'GBP',
+  'HKD', 'HRK', 'HUF', 'IDR', 'ILS', 'INR', 'ISK', 'JPY', 'KRW', 'MXN',
+  'MYR', 'NOK', 'NZD', 'PHP', 'PLN', 'RON', 'RUB', 'SEK', 'SGD', 'THB',
+  'TRY', 'USD', 'ZAR',
+] as const;
